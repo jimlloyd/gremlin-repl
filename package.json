@@ -15,6 +15,18 @@
   "license": "ISC",
   "dependencies": {
     "gremlin": "^0.3.12",
-    "promise": "^5.0.0"
-  }
+    "lodash": "^2.4.1"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jimlloyd/gremlin-repl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jimlloyd/gremlin-repl/issues"
+  },
+  "homepage": "https://github.com/jimlloyd/gremlin-repl"
 }
