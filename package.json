@@ -2,7 +2,7 @@
   "name": "gremlin-repl",
   "version": "0.0.0",
   "description": "A repl for gremlin",
-  "main": "gremlin-repl.js",
+  "bin": "./bin/gremlin-repl.js",
   "scripts": {
     "test": "mocha"
   },
