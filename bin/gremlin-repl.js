@@ -7,6 +7,16 @@ var Gremlin = require('gremlin');
 var repl = require('repl');
 var vm = require('vm');
 var _ = require('lodash');
+var TeeTransform = require('./TeeTransform');
+
+var input;
+if (process.stdout.isTTY) {
+    input = process.stdin;
+}
+else {
+    input = new TeeTransform({ tee: process.stdout, teeFormat: '%s\n'} );
+    process.stdin.pipe(input);
+}
 
 var gremlin = new Gremlin();
 
@@ -36,24 +46,26 @@ function cmdEval(code, context, file, cb) {
 }
 
 var replServer = repl.start({
-  prompt: 'node > ',
-  ignoreUndefined: true,
-  eval: cmdEval,
+    prompt: 'node > ',
+    ignoreUndefined: true,
+    input: input,
+    output: process.stdout,
+    eval: cmdEval,
 });
 
-function NewEmptyTinker() {
+function makeEmptyTinker() {
     var TinkerGraph = gremlin.java.import('com.tinkerpop.blueprints.impls.tg.TinkerGraph');
     return gremlin.wrap(new TinkerGraph());
 }
 
-function NewDemoTinker() {
+function makeDemoTinker() {
     var TinkerGraphFactory = gremlin.java.import('com.tinkerpop.blueprints.impls.tg.TinkerGraphFactory');
     return gremlin.wrap(TinkerGraphFactory.createTinkerGraphSync());
 }
 
 replServer.context.gremlin = gremlin;
-replServer.context.t = NewEmptyTinker();
-replServer.context.g = NewDemoTinker();
+replServer.context.t = makeEmptyTinker();
+replServer.context.g = makeDemoTinker();
 replServer.context.HashSet = gremlin.java.import('java.util.HashSet');
 replServer.context.ArrayList = gremlin.java.import('java.util.ArrayList');
 replServer.context.HashMap = gremlin.java.import('java.util.HashMap');

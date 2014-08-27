@@ -2,7 +2,7 @@
   "name": "gremlin-repl",
   "version": "0.0.0",
   "description": "A repl for gremlin",
-  "main": "gremlin-repl.js",
+  "bin": "./bin/gremlin-repl.js",
   "scripts": {
     "test": "mocha"
   },
@@ -20,7 +20,16 @@
   "directories": {
     "test": "test"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "chai-as-promised": "^4.1.1",
+    "concat-stream": "^1.4.6",
+    "from": "^0.1.3",
+    "jshint": "^2.5.5",
+    "mocha": "^1.21.4",
+    "q": "^1.0.1",
+    "semaphore": "^1.0.1"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:jimlloyd/gremlin-repl.git"
@@ -28,5 +37,14 @@
   "bugs": {
     "url": "https://github.com/jimlloyd/gremlin-repl/issues"
   },
-  "homepage": "https://github.com/jimlloyd/gremlin-repl"
+  "homepage": "https://github.com/jimlloyd/gremlin-repl",
+  "jshintConfig": {
+    "node": true,
+    "globalstrict": false,
+    "globals": {
+      "expect": true,
+      "describe": true,
+      "it": true
+    }
+  }
 }
