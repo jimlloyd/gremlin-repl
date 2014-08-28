@@ -1,0 +1,9 @@
+// Return all vertices of the demo graph
+g.V()
+
+// Create a java HashSet to use in following gremlin statement
+var s = new HashSet()
+// Compute the shortest path between nodes with id '2' and '6'.
+g.V('id', '2').both().except(s).store(s).loop(3, '{it -> it.object.id != "6" && it.loops < 10}').has('id','6').path()
+
+g.V().both()

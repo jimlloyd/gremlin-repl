@@ -9,6 +9,6 @@ var options = {
     prompt: 'node > ',
     input: process.stdin,
     output: process.stdout,
-}
+};
 
 var replServer = repl.start(options);
