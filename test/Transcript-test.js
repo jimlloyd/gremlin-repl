@@ -11,6 +11,8 @@ var concat = require('concat-stream');
 describe('Transcript', function() {
 
     it('a test script should produce an expected transcript', function(done) {
+        this.timeout(3000);
+
         var expected = fs.readFileSync('test/data/test.expected', { encoding: 'utf8' });
         var expectedLines = expected.split('\n');
 

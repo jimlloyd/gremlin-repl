@@ -4,7 +4,7 @@
   "description": "A repl for gremlin",
   "bin": "./bin/gremlin-repl.js",
   "scripts": {
-    "test": "mocha"
+    "test": "make"
   },
   "keywords": [
     "gremlin",
