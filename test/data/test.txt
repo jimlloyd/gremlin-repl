@@ -32,9 +32,25 @@ var v = g.V('id', '1')
 v
 v
 
+// All adjacent vertices connected by any out edge
+g.V('id', '1').out()
+
+// All adjacent vertices connected by out edges labeled 'knows'
+g.V('id', '1').out('knows')
+
+// All outbound edges
+g.V('id', '1').out()
+
+// Outbound edges labeled 'knows'
+g.V('id', '1').out('knows')
+
+// Use filter closure to traverse to head verticies of edges that have a weight less than 1.0
+g.V('id', '1').outE().filter('{it -> it.weight < 1.0}').inV()
+
+// lets traverse to marko's 30+ year old friends' created projects
+g.V('name', 'marko').out('knows').filter('{it -> it.age > 30}').out('created').property('name')
+
 // Create a java HashSet to use in following gremlin statement
 var s = new HashSet()
 // Compute the shortest path between nodes with id '2' and '6'.
 g.V('id', '2').both().except(s).store(s).loop(3, '{it -> it.object.id != "6" && it.loops < 10}').has('id','6').path()
-
-g.V().both()
