@@ -5,7 +5,7 @@
 // vairables.
 
 global._ = require('lodash');
-global.Q = require('Q');
+global.Q = require('q');
 
 
 var chai = require('chai'),
