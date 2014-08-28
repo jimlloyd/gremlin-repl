@@ -1,0 +1,32 @@
+node > // Return all vertices of the demo graph
+node > g.V()
+[ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 35, name: 'peter', _id: '6', _type: 'vertex' },
+  { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+node > 
+node > // Create a java HashSet to use in following gremlin statement
+node > var s = new HashSet()
+node > // Compute the shortest path between nodes with id '2' and '6'.
+node > g.V('id', '2').both().except(s).store(s).loop(3, '{it -> it.object.id != "6" && it.loops < 10}').has('id','6').path()
+[ [ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+    { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+    { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+    { age: 35, name: 'peter', _id: '6', _type: 'vertex' } ] ]
+node > 
+node > g.V().both()
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { age: 35, name: 'peter', _id: '6', _type: 'vertex' },
+  { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > 
