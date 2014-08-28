@@ -1,0 +1,164 @@
+node > // Example 1: Basic Transforms
+node > g.V('name', 'marko').out();
+[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > // g.V({name: 'marko'}).out();
+node > // g.v(1, 4).out('knows', 'created').in();
+node > // g.v([1, 4]).out(['knows', 'created']).in();
+node > 
+node > // Example 2: [i]
+node > g.V().index(0).property('name');
+[ 'lop' ]
+node > 
+node > // Example 3: [i..j]
+node > g.V().range(0,1).property('name');
+[ 'lop', 'vadas' ]
+node > 
+node > // Example 4: has
+node > g.E().has('id', T.eq, '9')
+[ { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' } ]
+node > // has with comparison to float. Must use g.java.newFloat().
+node > // Doesn't seem to be possible to automatically cast from javascript double precision
+node > // to java float precision.
+node > g.E().has('weight', T.gt, g.java.newFloat(0.5))
+[ { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' },
+  { weight: 1,
+    _id: '8',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '4',
+    _label: 'knows' } ]
+node > g.E().has('weight', T.lt, g.java.newFloat(0.5))
+[ { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.4,
+    _id: '11',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > g.E().has('weight', T.eq, g.java.newFloat(0.5))
+[ { weight: 0.5,
+    _id: '7',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '2',
+    _label: 'knows' } ]
+node > g.E().has('weight', T.neq, g.java.newFloat(0.5))
+[ { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' },
+  { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 1,
+    _id: '8',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '4',
+    _label: 'knows' },
+  { weight: 0.4,
+    _id: '11',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > g.E().has('weight', T.gte, g.java.newFloat(0.5))
+[ { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' },
+  { weight: 0.5,
+    _id: '7',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '2',
+    _label: 'knows' },
+  { weight: 1,
+    _id: '8',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '4',
+    _label: 'knows' } ]
+node > g.E().has('weight', T.lte, g.java.newFloat(0.5))
+[ { weight: 0.5,
+    _id: '7',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '2',
+    _label: 'knows' },
+  { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.4,
+    _id: '11',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > 
+node > // g.E().has('weight', T.gt, '0.5f').outV().transform('{[it.id,it.age]}');
+node > 
+node > // Example 5: and & or
+node > g.V().and(g._().both('knows'), g._().both('created')); // in mine, not in inolen's
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+node > // g.v(1).outE().or(g._().has('id', T.eq, '9'), g._().has('weight', T.lt, '0.6f'));   //
+node > 
+node > 
+node > 
+node > // g.V().out().groupBy('{it.name}{it.in}{it.unique().findAll{i -> i.age > 30}.name}').cap();
+node > // g.V().retain([g.v(1), g.v(2), g.v(3)]);
+node > 
+node > var map = new g.HashMap();
+node > //g.V().groupBy(map, '{it}{it.out}').iterate();
+node > 
+node > var x = new g.ArrayList()
+node > g.V('id', '1').out().aggregate(x).out().retain(x)
+[ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > 
+node > 
