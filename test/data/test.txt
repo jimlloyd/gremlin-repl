@@ -1,5 +1,36 @@
-// Return all vertices of the demo graph
+// Return all vertices of the demo graph.
+// The gremlin groovy console only outputs 'v[id]' for each vertex.
+// We currently output all properties (including impl properties) of each vertex.
 g.V()
+
+// Return just the names of each vertex
+g.V().property('name')
+
+// Return all application properties of each vertex (omit impl properties)
+g.V().map()
+
+// Return all edges, incuding all properties of each edge.
+g.E()
+
+// Return only the application properties of each edge.
+g.E().map()
+
+// Return just the weight of each edge.
+g.E().property('weight')
+
+// With the groovy console we can do:
+// gremlin> v = g.v(1)
+// But with the node gremlin console we must do:
+v = g.V('id', '1')
+
+// But note that currently with the node console, v is a pipeline an executed immediately.
+// So, the value of v has immediately changed:
+v
+
+// This behavior can be deferred by using 'var'.
+var v = g.V('id', '1')
+v
+v
 
 // Create a java HashSet to use in following gremlin statement
 var s = new HashSet()
