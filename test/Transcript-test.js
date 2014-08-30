@@ -44,4 +44,9 @@ describe('Transcript', function() {
         transcriptTest('gremlindocs-transform', done);
     });
 
+    it('should produce the expected transcript given gremlindocs-filter.txt', function(done) {
+        this.timeout(5000);
+        transcriptTest('gremlindocs-filter', done);
+    });
+
 });
