@@ -1,0 +1,280 @@
+node > // gremlindocs-transform
+node > // See http://gremlindocs.com/#transform
+node > 
+node > // ### http://gremlindocs.com/#transform/_
+node > // Identity turns an arbitrary object into a "pipeline".
+node > // NOT WORKING
+node > // The syntax for javascript will need to be different.
+node > // Gremlin-node might already support this but how?
+node > 
+node > // We'd lie to be able to do this
+node > // var x = [1,2,3]
+node > // x._()
+node > // x._().transform('{it -> it+1}')
+node > 
+node > // While playing around I discovered this:
+node > g._()
+[ 'tinkergraph[vertices:6 edges:6]' ]
+node > t._()
+[ 'tinkergraph[vertices:0 edges:0]' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/both
+node > // Get both adjacent vertices of the vertex, the in and the out.
+node > g.V('id', '4').both()
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > g.V('id', '4').both().id()
+[ '1', '5', '3' ]
+node > g.V('id', '4').both('knows').id()
+[ '1' ]
+node > g.V('id', '4').both('knows', 'created').id()
+[ '1', '5', '3' ]
+node > g.V('id', '4').both(1, 'knows', 'created').id()
+[ '1' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/bothE
+node > // Get both incoming and outgoing edges of the vertex.
+node > g.V('id', '4').bothE()
+[ { weight: 1,
+    _id: '8',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '4',
+    _label: 'knows' },
+  { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' },
+  { weight: 0.4,
+    _id: '11',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '3',
+    _label: 'created' } ]
+node > g.V('id', '4').bothE().id()
+[ '8', '10', '11' ]
+node > g.V('id', '4').bothE('knows').id()
+[ '8' ]
+node > g.V('id', '4').bothE('knows', 'created').id()
+[ '8', '10', '11' ]
+node > g.V('id', '4').bothE(1, 'knows', 'created').id()
+[ '8' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/bothV
+node > // Get both incoming and outgoing vertices of the edge.
+node > g.E('id', '12')
+[ { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > g.E('id', '12').outV()
+[ { age: 35, name: 'peter', _id: '6', _type: 'vertex' } ]
+node > g.E('id', '12').inV()
+[ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > g.E('id', '12').bothV()
+[ { age: 35, name: 'peter', _id: '6', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > 
+node > // ### http://gremlindocs.com/#transform/cap
+node > // Gets the side-effect of the pipe prior. In other words, it emits the value of the previous
+node > // step and not the values that flow through it.
+node > g.V('lang', 'java').in('created').property('name').groupCount()
+[ 'marko', 'josh', 'peter', 'josh' ]
+node > g.V('lang', 'java').in('created').property('name').groupCount().cap()
+[ { marko: 1, peter: 1, josh: 2 } ]
+node > 
+node > // ### http://gremlindocs.com/#transform/e
+node > // The edge iterator for the graph. Utilize this to iterate through all the edges in the graph.
+node > // Use with care on large graphs.
+node > g.E()
+[ { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' },
+  { weight: 0.5,
+    _id: '7',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '2',
+    _label: 'knows' },
+  { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 1,
+    _id: '8',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '4',
+    _label: 'knows' },
+  { weight: 0.4,
+    _id: '11',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > g.E().property('weight')
+[ 1, 0.5, 0.4, 1, 0.4, 0.2 ]
+node > 
+node > // ### http://gremlindocs.com/#transform/gather
+node > // Collect all objects up to that step and process the gathered list with the provided closure.
+node > g.V('id', '1').out()
+[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > g.V('id', '1').out().gather()
+[ [ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+    { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+    { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ] ]
+node > g.V('id', '1').out().gather('{it -> it.size()}')
+[ 3 ]
+node > 
+node > // ### http://gremlindocs.com/#transform/id
+node > // Gets the unique identifier of the element.
+node > g.V('name', 'marko')
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' } ]
+node > g.V('name', 'marko').id()
+[ '1' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/in
+node > // Gets the adjacent vertices to the vertex.
+node > g.V('id', '4').id()
+[ '4' ]
+node > g.V('id', '4').inE().outV().id()
+[ '1' ]
+node > g.V('id', '4').in().id()
+[ '1' ]
+node > g.V('id', '3').id()
+[ '3' ]
+node > g.V('id', '3').in('created').id()
+[ '1', '4', '6' ]
+node > g.V('id', '3').in(2, 'created').id()
+[ '1', '4' ]
+node > g.V('id', '3').inE('created').outV().id()
+[ '1', '4', '6' ]
+node > g.V('id', '3').inE(2, 'created').outV().index(0).id()
+[ '1' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/ine
+node > // Gets the incoming edges of the vertex.
+node > g.V('id', '4').id()
+[ '4' ]
+node > g.V('id', '4').inE().outV().id()
+[ '1' ]
+node > g.V('id', '4').in().id()
+[ '1' ]
+node > g.V('id', '3').id()
+[ '3' ]
+node > g.V('id', '3').in('created').id()
+[ '1', '4', '6' ]
+node > g.V('id', '3').in(2, 'created').id()
+[ '1', '4' ]
+node > g.V('id', '3').inE('created').outV().id()
+[ '1', '4', '6' ]
+node > g.V('id', '3').inE(2, 'created').outV().index(0).id()
+[ '1' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/inv
+node > // Get both incoming head vertex of the edge.
+node > g.E('id', '12')
+[ { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > g.E('id', '12').inV().id()
+[ '3' ]
+node > g.E('id', '12').bothV().id()
+[ '6', '3' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/key
+node > // Get the property value of an element.
+node > // This javascript implementation does not support the Groovy methods.
+node > // Only property(key) is supported. Note: use .property(), not .getProperty().
+node > g.V('id', '3').property('name')
+[ 'lop' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/label
+node > // Gets the label of an edge.
+node > g.V('id', '6').outE().label()
+[ 'created' ]
+node > g.V('id', '1').outE().filter('{it -> it.label == "created"}')
+[ { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' } ]
+node > g.V('id', '1').outE().has('label', 'created')
+[ { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' } ]
+node > 
+node > // ### http://gremlindocs.com/#transform/linkboth-in-out
+node > // NOT WORKING
+node > 
+node > // ### http://gremlindocs.com/#transform/map
+node > // Gets the property map of the graph element.
+node > g.V('id', '1').map()
+[ { age: 29, name: 'marko' } ]
+node > g.V().map()
+[ { name: 'lop', lang: 'java' },
+  { age: 27, name: 'vadas' },
+  { age: 29, name: 'marko' },
+  { age: 35, name: 'peter' },
+  { name: 'ripple', lang: 'java' },
+  { age: 32, name: 'josh' } ]
+node > g.V().map('id', 'age')
+[ { id: '3' },
+  { id: '2', age: 27 },
+  { id: '1', age: 29 },
+  { id: '6', age: 35 },
+  { id: '5' },
+  { id: '4', age: 32 } ]
+node > 
+node > // ### http://gremlindocs.com/#transform/memoize
+node > // Remembers a particular mapping from input to output. Long or expensive expressions with no 
+node > // side effects can use this step to remember a mapping, which helps reduce load when previously 
+node > // processed objects are passed into it.
+node > // For situations where memoization may consume large amounts of RAM, consider using an embedded 
+node > // key-value store like JDBM or some other persistent Map implementation.
+node > g.V().out().out().memoize(1).property('name')
+[ 'ripple', 'lop' ]
+node > g.V().out().as('here').out().memoize('here').property('name')
+[ 'ripple', 'lop' ]
+node > m = new HashMap()
+{}
+node > g.V().out().out().memoize(1, m).property('name')
+[ 'ripple', 'lop' ]
+node > 
+node > // ### http://gremlindocs.com/#transform/order
+node > // Order the items in the stream according to the closure if provided. If no closure is provided, 
+node > // then a default sort order is used.
+node > g.V().property('name').order()
+[ 'josh', 'lop', 'marko', 'peter', 'ripple', 'vadas' ]
+node > g.V().property('name').order('{it -> it.b <=> it.a}')
+[ 'vadas', 'ripple', 'peter', 'marko', 'lop', 'josh' ]
+node > 
+node > 
+node > 
+node > 
+node > 

@@ -1,0 +1,133 @@
+// gremlindocs-transform
+// See http://gremlindocs.com/#transform
+
+// ### http://gremlindocs.com/#transform/_
+// Identity turns an arbitrary object into a "pipeline".
+// NOT WORKING
+// The syntax for javascript will need to be different.
+// Gremlin-node might already support this but how?
+
+// We'd lie to be able to do this
+// var x = [1,2,3]
+// x._()
+// x._().transform('{it -> it+1}')
+
+// While playing around I discovered this:
+g._()
+t._()
+
+// ### http://gremlindocs.com/#transform/both
+// Get both adjacent vertices of the vertex, the in and the out.
+g.V('id', '4').both()
+g.V('id', '4').both().id()
+g.V('id', '4').both('knows').id()
+g.V('id', '4').both('knows', 'created').id()
+g.V('id', '4').both(1, 'knows', 'created').id()
+
+// ### http://gremlindocs.com/#transform/bothE
+// Get both incoming and outgoing edges of the vertex.
+g.V('id', '4').bothE()
+g.V('id', '4').bothE().id()
+g.V('id', '4').bothE('knows').id()
+g.V('id', '4').bothE('knows', 'created').id()
+g.V('id', '4').bothE(1, 'knows', 'created').id()
+
+// ### http://gremlindocs.com/#transform/bothV
+// Get both incoming and outgoing vertices of the edge.
+g.E('id', '12')
+g.E('id', '12').outV()
+g.E('id', '12').inV()
+g.E('id', '12').bothV()
+
+// ### http://gremlindocs.com/#transform/cap
+// Gets the side-effect of the pipe prior. In other words, it emits the value of the previous
+// step and not the values that flow through it.
+g.V('lang', 'java').in('created').property('name').groupCount()
+g.V('lang', 'java').in('created').property('name').groupCount().cap()
+
+// ### http://gremlindocs.com/#transform/e
+// The edge iterator for the graph. Utilize this to iterate through all the edges in the graph.
+// Use with care on large graphs.
+g.E()
+g.E().property('weight')
+
+// ### http://gremlindocs.com/#transform/gather
+// Collect all objects up to that step and process the gathered list with the provided closure.
+g.V('id', '1').out()
+g.V('id', '1').out().gather()
+g.V('id', '1').out().gather('{it -> it.size()}')
+
+// ### http://gremlindocs.com/#transform/id
+// Gets the unique identifier of the element.
+g.V('name', 'marko')
+g.V('name', 'marko').id()
+
+// ### http://gremlindocs.com/#transform/in
+// Gets the adjacent vertices to the vertex.
+g.V('id', '4').id()
+g.V('id', '4').inE().outV().id()
+g.V('id', '4').in().id()
+g.V('id', '3').id()
+g.V('id', '3').in('created').id()
+g.V('id', '3').in(2, 'created').id()
+g.V('id', '3').inE('created').outV().id()
+g.V('id', '3').inE(2, 'created').outV().index(0).id()
+
+// ### http://gremlindocs.com/#transform/ine
+// Gets the incoming edges of the vertex.
+g.V('id', '4').id()
+g.V('id', '4').inE().outV().id()
+g.V('id', '4').in().id()
+g.V('id', '3').id()
+g.V('id', '3').in('created').id()
+g.V('id', '3').in(2, 'created').id()
+g.V('id', '3').inE('created').outV().id()
+g.V('id', '3').inE(2, 'created').outV().index(0).id()
+
+// ### http://gremlindocs.com/#transform/inv
+// Get both incoming head vertex of the edge.
+g.E('id', '12')
+g.E('id', '12').inV().id()
+g.E('id', '12').bothV().id()
+
+// ### http://gremlindocs.com/#transform/key
+// Get the property value of an element.
+// This javascript implementation does not support the Groovy methods.
+// Only property(key) is supported. Note: use .property(), not .getProperty().
+g.V('id', '3').property('name')
+
+// ### http://gremlindocs.com/#transform/label
+// Gets the label of an edge.
+g.V('id', '6').outE().label()
+g.V('id', '1').outE().filter('{it -> it.label == "created"}')
+g.V('id', '1').outE().has('label', 'created')
+
+// ### http://gremlindocs.com/#transform/linkboth-in-out
+// NOT WORKING
+
+// ### http://gremlindocs.com/#transform/map
+// Gets the property map of the graph element.
+g.V('id', '1').map()
+g.V().map()
+g.V().map('id', 'age')
+
+// ### http://gremlindocs.com/#transform/memoize
+// Remembers a particular mapping from input to output. Long or expensive expressions with no 
+// side effects can use this step to remember a mapping, which helps reduce load when previously 
+// processed objects are passed into it.
+// For situations where memoization may consume large amounts of RAM, consider using an embedded 
+// key-value store like JDBM or some other persistent Map implementation.
+g.V().out().out().memoize(1).property('name')
+g.V().out().as('here').out().memoize('here').property('name')
+m = new HashMap()
+g.V().out().out().memoize(1, m).property('name')
+
+// ### http://gremlindocs.com/#transform/order
+// Order the items in the stream according to the closure if provided. If no closure is provided, 
+// then a default sort order is used.
+g.V().property('name').order()
+g.V().property('name').order('{it -> it.b <=> it.a}')
+
+
+
+
