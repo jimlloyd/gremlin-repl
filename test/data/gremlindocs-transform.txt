@@ -128,6 +128,79 @@ g.V().out().out().memoize(1, m).property('name')
 g.V().property('name').order()
 g.V().property('name').order('{it -> it.b <=> it.a}')
 
+// ### http://gremlindocs.com/#transform/ordermap
+// For every incoming map, sort with supplied closure or T.decr or T.incr and emit keys.
+g.V().both().groupCount().cap()
+g.V().both().groupCount().cap().orderMap(T.decr)
+g.V().both().groupCount().cap().orderMap(T.decr).range(0,1).id()
+g.V().both().groupCount().cap().orderMap(T.decr).range(0,1).property('name')
 
+// ### http://gremlindocs.com/#transform/out
+// Gets the out adjacent vertices to the vertex.
+g.V('id', '1').outE().inV().id()
+g.V('id', '1').out().id()
+g.V('id', '1').outE('knows').inV().id()
+g.V('id', '1').out('knows').id()
+g.V('id', '1').out(1, 'knows').id()
 
+// ### http://gremlindocs.com/#transform/oute
+// Gets the outgoing edges to the vertex.
+g.V('id', '1').outE().inV().id()
+g.V('id', '1').outE().id()
+g.V('id', '1').outE('knows').inV().id()
+g.V('id', '1').outE('knows').id()
+g.V('id', '1').outE(1, 'knows').id()
 
+// ### http://gremlindocs.com/#transform/outv
+// Get both outgoing tail vertex of the edge.
+g.E('id', '12')
+g.E('id', '12').outV().id()
+g.E('id', '12').inV().id()
+g.E('id', '12').bothV().id()
+
+// ### http://gremlindocs.com/#transform/path
+// Gets the path through the pipeline up to this point, where closures are post-processing for 
+// each object in the path. If the path step is provided closures then, in a round robin fashion, 
+// the closures are evaluated over each object of the path and that post-processed path is returned.
+g.V('id', '1').out().path()
+g.V('id', '1').out().path('{it -> it.id}')
+g.V('id', '1').out().path('{it -> it.id}', '{it -> it.name}')
+g.V('id', '1').outE().inV().property('name').path()
+
+// ### http://gremlindocs.com/#transform/scatter
+// Unroll all objects in the iterable at that step. Gather/Scatter is good for breadth-first 
+// traversals where the gather closure filters out unwanted elements at the current radius.
+g.V('id', '1').out()
+g.V('id', '1').out().gather('{it -> it[1..2]}')
+g.V('id', '1').out().gather('{it -> it[1..2]}').scatter()
+
+// ### http://gremlindocs.com/#transform/select
+// Select the named steps to emit after select with post-processing closures.
+g.V('id', '1').as('x').out('knows').as('y').select()
+var c = new ArrayList()
+c.addSync('y')
+g.V('id', '1').as('x').out('knows').as('y').select(c)
+g.V('id', '1').as('x').out('knows').as('y').select(c, '{it -> it.name}')
+g.V('id', '1').as('x').out('knows').as('y').select('{it -> it.id}', '{it -> it.name}')
+
+// ### http://gremlindocs.com/#transform/shuffle
+// Collect all objects up to that step into a list and randomize their order.
+// g.V('id', '1').out().shuffle()
+// shuffle() does the right thing, but because it randomizes we can't use it directly 
+// and expect repeatable results. So we sort the results afterwards to get repeatability.
+g.V('id', '1').out().shuffle().order('{it -> it.a.name <=> it.b.name}')
+
+// ### http://gremlindocs.com/#transform/transform
+// Transform emits the result of a closure.
+g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().property('age')
+g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().property('age').transform('{it -> it+2}')
+g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().transform('{it -> [it.id, it.age]}')
+g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().transform('{it -> [id:it.id, age:it.age]}')
+
+// ### http://gremlindocs.com/#transform/v
+// The vertex iterator for the graph. Utilize this to iterate through all the vertices in the graph. 
+// Use with care on large graphs unless used in combination with a key index lookup.
+g.V()
+g.V().id()
+g.V('name', 'marko')
+g.V('name', 'marko').property('name')
