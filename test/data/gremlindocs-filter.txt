@@ -1,0 +1,99 @@
+// gremlindocs-transform
+// See http://gremlindocs.com/#filter
+
+// ### http://gremlindocs.com/#filter/i
+// A index filter that emits the particular indexed object.
+g.V().index(0).property('name')
+
+// ### http://gremlindocs.com/#filter/i-j
+// A range filter that emits the objects within a range.
+g.V().range(0,1).property('name')
+
+// ### http://gremlindocs.com/#filter/and
+// Takes a collection of pipes and emits incoming objects that are true for all of the pipes.
+g.V('id', '1').outE().and(g._().has('weight', T.gt, g.java.newFloat(0.4)), g._().has('weight', T.lt, g.java.newFloat(0.8)))
+g.V().and(g._().both("knows"), g._().both("created")).id()
+
+// ### http://gremlindocs.com/#filter/back
+// Go back to the results of a named step.
+g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x').property('age')
+
+// ### http://gremlindocs.com/#filter/dedup
+// Emit only incoming objects that have not been seen before with an optional closure being the object to check on.
+g.V('id', '1').out().in().id()
+g.V('id', '1').out().in().dedup().id()
+
+// ### http://gremlindocs.com/#filter/except
+// Emit everything to pass except what is in the supplied collection or in the results of a named step.
+// TODO: Need an easy way to do the equivalent of this:
+// x = [g.v(1), g.v(2), g.v(3)]
+x = new ArrayList()
+g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
+g.V().except(x).id()
+x = new ArrayList()
+g.V('id', '1').out().aggregate(x).out().except(x).id()
+g.V().has('age',T.lt,30).as('x').out('created').in('created').except('x').id()
+
+// ### http://gremlindocs.com/#filter/filter
+// Decide whether to allow an object to pass. Return true from the closure to allow an object to pass.
+g.V().filter('{it -> it.age > 29}').property('name')
+
+// ### http://gremlindocs.com/#filter/has
+// Allows an element if it has a particular property. Utilizes several options for comparisons through T:
+// T.gt - greater than
+// T.gte - greater than or equal to
+// T.eq - equal to
+// T.neq - not equal to
+// T.lte - less than or equal to
+// T.lt - less than
+// T.in - contained in a list
+// T.notin - not contained in a list
+// It is worth noting that the syntax of has is similar to g.V("name", "marko"), which has the difference of 
+// being a key index lookup and as such will perform faster. In contrast, this line, g.V.has("name", "marko"), 
+// will iterate over all vertices checking the name property of each vertex for a match and will be significantly 
+// slower than the key index approach. All that said, the behavior of has is dependent upon the underlying 
+// implementation and the above description is representative of most Blueprints implementations. For instance, 
+// Titan will actually try to use indices where it sees the opportunity to do so. It is therefore important to 
+// understand the functionality of the underlying database when writing traversals.
+g.V().has('name', 'marko').property('name')
+g.V('id', '1').outE().has('weight', T.gte, g.java.newFloat(0.5)).property('weight')
+g.V().has('age').property('name')
+//TODO: need way to do new ArrayList([27,35])
+x = new ArrayList
+x.addSync(27)
+x.addSync(35)
+g.V().has('age').has('age', T.notin, x).property('name')
+
+// ### http://gremlindocs.com/#filter/hasnot
+// Allows an element if it does not have a particular property. Utilizes several options for comparisons through T,
+// see above for elements of T.
+// NOTWORKING: g.V('id', '1').outE().hasNot('weight', T.eq, g.java.newFloat(0.5))
+g.V().hasNot('age').property('name')
+
+// ### http://gremlindocs.com/#filter/interval
+// Allow elements to pass that have their property in the provided start and end interval.
+g.E().interval('weight', g.java.newFloat(0.3), g.java.newFloat(0.9)).property('weight')
+
+// ### http://gremlindocs.com/#filter/or
+// Takes a collection of pipes and emits incoming objects that are true for any of the pipes.
+g.V('id', '1').outE().or(g._().has('id', T.eq, '9'), g._().has('weight', T.lt, g.java.newFloat(0.6)))
+
+// http://gremlindocs.com/#filter/random
+// Emits the incoming object if biased coin toss is heads.
+// Note that since random() takes a java.lang.Double, we can pass the javascript value directly,
+// i.e. we don't need to use g.java.newDouble(0.5).
+// g.V().random(0.5) // Works, but because it is random there is no deterministic expected result.
+
+// ### http://gremlindocs.com/#filter/retain
+// Allow everything to pass except what is not in the supplied collection or in the results of a named step.
+x = new ArrayList()
+g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
+g.V().retain(x).id()
+x = new ArrayList()
+g.V('id','1').out().aggregate(x).out().retain(x).id()
+g.V().as('x').both().both().both().retain('x').id()
+
+// ### http://gremlindocs.com/#filter/simplepath
+// Emit the object only if the current path has no repeated elements.
+g.V('id','1').out().in().id()
+g.V('id','1').out().in().simplePath().id()

@@ -1,0 +1,148 @@
+node > // gremlindocs-transform
+node > // See http://gremlindocs.com/#filter
+node > 
+node > // ### http://gremlindocs.com/#filter/i
+node > // A index filter that emits the particular indexed object.
+node > g.V().index(0).property('name')
+[ 'lop' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/i-j
+node > // A range filter that emits the objects within a range.
+node > g.V().range(0,1).property('name')
+[ 'lop', 'vadas' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/and
+node > // Takes a collection of pipes and emits incoming objects that are true for all of the pipes.
+node > g.V('id', '1').outE().and(g._().has('weight', T.gt, g.java.newFloat(0.4)), g._().has('weight', T.lt, g.java.newFloat(0.8)))
+[ { weight: 0.5,
+    _id: '7',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '2',
+    _label: 'knows' } ]
+node > g.V().and(g._().both("knows"), g._().both("created")).id()
+[ '1', '4' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/back
+node > // Go back to the results of a named step.
+node > g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x').property('age')
+[ 29 ]
+node > 
+node > // ### http://gremlindocs.com/#filter/dedup
+node > // Emit only incoming objects that have not been seen before with an optional closure being the object to check on.
+node > g.V('id', '1').out().in().id()
+[ '1', '1', '1', '4', '6' ]
+node > g.V('id', '1').out().in().dedup().id()
+[ '1', '4', '6' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/except
+node > // Emit everything to pass except what is in the supplied collection or in the results of a named step.
+node > // TODO: Need an easy way to do the equivalent of this:
+node > // x = [g.v(1), g.v(2), g.v(3)]
+node > x = new ArrayList()
+{}
+node > g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
+[ '1', '2', '3' ]
+node > g.V().except(x).id()
+[ '6', '5', '4' ]
+node > x = new ArrayList()
+{}
+node > g.V('id', '1').out().aggregate(x).out().except(x).id()
+[ '5' ]
+node > g.V().has('age',T.lt,30).as('x').out('created').in('created').except('x').id()
+[ '4', '6' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/filter
+node > // Decide whether to allow an object to pass. Return true from the closure to allow an object to pass.
+node > g.V().filter('{it -> it.age > 29}').property('name')
+[ 'peter', 'josh' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/has
+node > // Allows an element if it has a particular property. Utilizes several options for comparisons through T:
+node > // T.gt - greater than
+node > // T.gte - greater than or equal to
+node > // T.eq - equal to
+node > // T.neq - not equal to
+node > // T.lte - less than or equal to
+node > // T.lt - less than
+node > // T.in - contained in a list
+node > // T.notin - not contained in a list
+node > // It is worth noting that the syntax of has is similar to g.V("name", "marko"), which has the difference of 
+node > // being a key index lookup and as such will perform faster. In contrast, this line, g.V.has("name", "marko"), 
+node > // will iterate over all vertices checking the name property of each vertex for a match and will be significantly 
+node > // slower than the key index approach. All that said, the behavior of has is dependent upon the underlying 
+node > // implementation and the above description is representative of most Blueprints implementations. For instance, 
+node > // Titan will actually try to use indices where it sees the opportunity to do so. It is therefore important to 
+node > // understand the functionality of the underlying database when writing traversals.
+node > g.V().has('name', 'marko').property('name')
+[ 'marko' ]
+node > g.V('id', '1').outE().has('weight', T.gte, g.java.newFloat(0.5)).property('weight')
+[ 0.5, 1 ]
+node > g.V().has('age').property('name')
+[ 'vadas', 'marko', 'peter', 'josh' ]
+node > //TODO: need way to do new ArrayList([27,35])
+node > x = new ArrayList
+{}
+node > x.addSync(27)
+true
+node > x.addSync(35)
+true
+node > g.V().has('age').has('age', T.notin, x).property('name')
+[ 'marko', 'josh' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/hasnot
+node > // Allows an element if it does not have a particular property. Utilizes several options for comparisons through T,
+node > // see above for elements of T.
+node > // NOTWORKING: g.V('id', '1').outE().hasNot('weight', T.eq, g.java.newFloat(0.5))
+node > g.V().hasNot('age').property('name')
+[ 'lop', 'ripple' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/interval
+node > // Allow elements to pass that have their property in the provided start and end interval.
+node > g.E().interval('weight', g.java.newFloat(0.3), g.java.newFloat(0.9)).property('weight')
+[ 0.5, 0.4, 0.4 ]
+node > 
+node > // ### http://gremlindocs.com/#filter/or
+node > // Takes a collection of pipes and emits incoming objects that are true for any of the pipes.
+node > g.V('id', '1').outE().or(g._().has('id', T.eq, '9'), g._().has('weight', T.lt, g.java.newFloat(0.6)))
+[ { weight: 0.5,
+    _id: '7',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '2',
+    _label: 'knows' },
+  { weight: 0.4,
+    _id: '9',
+    _type: 'edge',
+    _outV: '1',
+    _inV: '3',
+    _label: 'created' } ]
+node > 
+node > // http://gremlindocs.com/#filter/random
+node > // Emits the incoming object if biased coin toss is heads.
+node > // Note that since random() takes a java.lang.Double, we can pass the javascript value directly,
+node > // i.e. we don't need to use g.java.newDouble(0.5).
+node > // g.V().random(0.5) // Works, but because it is random there is no deterministic expected result.
+node > 
+node > // ### http://gremlindocs.com/#filter/retain
+node > // Allow everything to pass except what is not in the supplied collection or in the results of a named step.
+node > x = new ArrayList()
+{}
+node > g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
+[ '1', '2', '3' ]
+node > g.V().retain(x).id()
+[ '3', '2', '1' ]
+node > x = new ArrayList()
+{}
+node > g.V('id','1').out().aggregate(x).out().retain(x).id()
+[ '3' ]
+node > g.V().as('x').both().both().both().retain('x').id()
+[ '3', '3', '1', '1', '4', '4' ]
+node > 
+node > // ### http://gremlindocs.com/#filter/simplepath
+node > // Emit the object only if the current path has no repeated elements.
+node > g.V('id','1').out().in().id()
+[ '1', '1', '1', '4', '6' ]
+node > g.V('id','1').out().in().simplePath().id()
+[ '4', '6' ]
+node > 
