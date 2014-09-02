@@ -40,13 +40,13 @@ node > // Emit everything to pass except what is in the supplied collection or i
 node > // TODO: Need an easy way to do the equivalent of this:
 node > // x = [g.v(1), g.v(2), g.v(3)]
 node > x = new ArrayList()
-{}
+'[]'
 node > g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
 [ '1', '2', '3' ]
 node > g.V().except(x).id()
 [ '6', '5', '4' ]
 node > x = new ArrayList()
-{}
+'[]'
 node > g.V('id', '1').out().aggregate(x).out().except(x).id()
 [ '5' ]
 node > g.V().has('age',T.lt,30).as('x').out('created').in('created').except('x').id()
@@ -82,7 +82,7 @@ node > g.V().has('age').property('name')
 [ 'vadas', 'marko', 'peter', 'josh' ]
 node > //TODO: need way to do new ArrayList([27,35])
 node > x = new ArrayList
-{}
+'[]'
 node > x.addSync(27)
 true
 node > x.addSync(35)
@@ -127,13 +127,13 @@ node >
 node > // ### http://gremlindocs.com/#filter/retain
 node > // Allow everything to pass except what is not in the supplied collection or in the results of a named step.
 node > x = new ArrayList()
-{}
+'[]'
 node > g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
 [ '1', '2', '3' ]
 node > g.V().retain(x).id()
 [ '3', '2', '1' ]
 node > x = new ArrayList()
-{}
+'[]'
 node > g.V('id','1').out().aggregate(x).out().retain(x).id()
 [ '3' ]
 node > g.V().as('x').both().both().both().retain('x').id()
