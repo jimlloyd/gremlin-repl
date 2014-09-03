@@ -1,0 +1,145 @@
+node > // gremlindocs-methods
+node > // See http://gremlindocs.com/#methods
+node > 
+node > // ### http://gremlindocs.com/#methods/element-keys
+node > // Get the property keys of an element.
+node > // TODO: Not implemented.
+node > 
+node > // http://gremlindocs.com/#methods/element-remove
+node > g.E().property('weight');
+[ 1, 0.5, 0.4, 1, 0.4, 0.2 ]
+node > var deferred = Q.defer();
+node > g.E().has('weight',T.lt,g.java.newFloat(0.5)).remove(deferred.makeNodeResolver()) // No removeSync
+node > deferred.promise
+node > g.E().property('weight')     // now show that the edges with weights<0.5 were removed.
+[ 1, 0.5, 1 ]
+node > var g = makeDemoTinker()         // restore the demo graph
+node > g.E().property('weight')     // now show that all edges restored.
+[ 1, 0.5, 0.4, 1, 0.4, 0.2 ]
+node > 
+node > // ### http://gremlindocs.com/#methods/element-values
+node > // Gets the property values of an element.
+node > // TODO: Not implemented.
+node > 
+node > // http://gremlindocs.com/#methods/graph-addedge
+node > // Adds an edge to the graph. Note that most graph implementations ignore the identifier supplied to addEdge.
+node > var t = makeEmptyTinker()
+node > var d1 = Q.defer()
+node > var d2 = Q.defer()
+node > t.addVertex(null, d1.makeNodeResolver())
+node > t.addVertex(null, d2.makeNodeResolver())
+node > var v1 = d1.promise
+node > var v2 = d2.promise
+node > var d3 = Q.defer()
+node > t.addEdge(null, v1, v2, 'friend', d3.makeNodeResolver())
+node > var edge = d3.promise
+node > v1
+[ { _id: '0', _type: 'vertex' } ]
+node > v2
+[ { _id: '1', _type: 'vertex' } ]
+node > edge
+[ { _id: '2',
+    _type: 'edge',
+    _outV: '0',
+    _inV: '1',
+    _label: 'friend' } ]
+node > 
+node > // http://gremlindocs.com/#methods/graph-addvertex
+node > // Note, here we are relying on the experimental promises version!
+node > // This won't work if we push to Travis or publish it any other way.
+node > t = makeEmptyTinker()
+[ 'tinkergraph[vertices:0 edges:0]' ]
+node > t.addVertexP()
+[ { _id: '0', _type: 'vertex' } ]
+node > t.addVertexP()
+[ { _id: '1', _type: 'vertex' } ]
+node > t.addVertexP(100)
+[ { _id: '100', _type: 'vertex' } ]
+node > // But our addVertex currently ignores passed in properties
+node > t.addVertexP(null, {name: 'stephen'})
+[ { _id: '2', _type: 'vertex' } ]
+node > 
+node > // http://gremlindocs.com/#methods/graph-e
+node > g = makeDemoTinker()
+[ 'tinkergraph[vertices:6 edges:6]' ]
+node > var d1 = Q.defer()
+node > g.e('10', d1.makeNodeResolver())
+node > var d2 = Q.defer()
+node > g.e('10', '11', '12', d2.makeNodeResolver())
+node > d2.promise
+[ { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' },
+  { weight: 0.4,
+    _id: '11',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > var d3 = Q.defer()
+node > g.e(['10', '11', '12'], d3.makeNodeResolver())
+node > d3.promise
+[ { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' },
+  { weight: 0.4,
+    _id: '11',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '3',
+    _label: 'created' },
+  { weight: 0.2,
+    _id: '12',
+    _type: 'edge',
+    _outV: '6',
+    _inV: '3',
+    _label: 'created' } ]
+node > 
+node > // http://gremlindocs.com/#methods/graph-load
+node > // Load a file from one of several standard formats such as GraphML, GML, or GraphSON.
+node > // Note: gremlin-node currently limited to GraphML.
+node > toy = makeEmptyTinker()
+[ 'tinkergraph[vertices:0 edges:0]' ]
+node > toy.loadGraphMLSync('toy-example.xml')
+node > toy
+[ 'tinkergraph[vertices:6 edges:6]' ]
+node > dead = makeEmptyTinker()
+[ 'tinkergraph[vertices:0 edges:0]' ]
+node > dead.loadGraphMLSync('grateful-dead.xml')
+node > dead
+[ 'tinkergraph[vertices:809 edges:8049]' ]
+node > 
+node > // http://gremlindocs.com/#methods/graph-save
+node > // Save a graph to file given one of several standard formats such as GraphML, GML, or GraphSON.
+node > // Note: gremlin-node currently limited to GraphML.
+node > dead.saveGraphMLSync('/tmp/copy-dead.xml')
+node > dead.saveGraphSONSync('/tmp/copy-dead.json')
+node > 
+node > // Now read back these files
+node > xmldead = makeEmptyTinker()
+[ 'tinkergraph[vertices:0 edges:0]' ]
+node > xmldead.loadGraphMLSync('/tmp/copy-dead.xml')
+node > xmldead
+[ 'tinkergraph[vertices:809 edges:8049]' ]
+node > 
+node > jsondead = makeEmptyTinker()
+[ 'tinkergraph[vertices:0 edges:0]' ]
+node > jsondead.loadGraphSONSync('/tmp/copy-dead.json')
+node > jsondead
+[ 'tinkergraph[vertices:809 edges:8049]' ]
+node > 
+node > 'goodbye'
+'goodbye'
+node > 

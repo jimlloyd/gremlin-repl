@@ -1,4 +1,4 @@
-// gremlindocs-transform
+// gremlindocs-filter
 // See http://gremlindocs.com/#filter
 
 // ### http://gremlindocs.com/#filter/i

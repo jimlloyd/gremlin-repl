@@ -1,0 +1,84 @@
+// gremlindocs-methods
+// See http://gremlindocs.com/#methods
+
+// ### http://gremlindocs.com/#methods/element-keys
+// Get the property keys of an element.
+// TODO: Not implemented.
+
+// http://gremlindocs.com/#methods/element-remove
+g.E().property('weight');
+var deferred = Q.defer();
+g.E().has('weight',T.lt,g.java.newFloat(0.5)).remove(deferred.makeNodeResolver()) // No removeSync
+deferred.promise
+g.E().property('weight')     // now show that the edges with weights<0.5 were removed.
+var g = makeDemoTinker()         // restore the demo graph
+g.E().property('weight')     // now show that all edges restored.
+
+// ### http://gremlindocs.com/#methods/element-values
+// Gets the property values of an element.
+// TODO: Not implemented.
+
+// http://gremlindocs.com/#methods/graph-addedge
+// Adds an edge to the graph. Note that most graph implementations ignore the identifier supplied to addEdge.
+var t = makeEmptyTinker()
+var d1 = Q.defer()
+var d2 = Q.defer()
+t.addVertex(null, d1.makeNodeResolver())
+t.addVertex(null, d2.makeNodeResolver())
+var v1 = d1.promise
+var v2 = d2.promise
+var d3 = Q.defer()
+t.addEdge(null, v1, v2, 'friend', d3.makeNodeResolver())
+var edge = d3.promise
+v1
+v2
+edge
+
+// http://gremlindocs.com/#methods/graph-addvertex
+// Note, here we are relying on the experimental promises version!
+// This won't work if we push to Travis or publish it any other way.
+t = makeEmptyTinker()
+t.addVertexP()
+t.addVertexP()
+t.addVertexP(100)
+// But our addVertex currently ignores passed in properties
+t.addVertexP(null, {name: 'stephen'})
+
+// http://gremlindocs.com/#methods/graph-e
+g = makeDemoTinker()
+var d1 = Q.defer()
+g.e('10', d1.makeNodeResolver())
+var d2 = Q.defer()
+g.e('10', '11', '12', d2.makeNodeResolver())
+d2.promise
+var d3 = Q.defer()
+g.e(['10', '11', '12'], d3.makeNodeResolver())
+d3.promise
+
+// http://gremlindocs.com/#methods/graph-load
+// Load a file from one of several standard formats such as GraphML, GML, or GraphSON.
+// Note: gremlin-node currently limited to GraphML.
+toy = makeEmptyTinker()
+toy.loadGraphMLSync('toy-example.xml')
+toy
+dead = makeEmptyTinker()
+dead.loadGraphMLSync('grateful-dead.xml')
+dead
+
+// http://gremlindocs.com/#methods/graph-save
+// Save a graph to file given one of several standard formats such as GraphML, GML, or GraphSON.
+// Note: gremlin-node currently limited to GraphML.
+dead.saveGraphMLSync('/tmp/copy-dead.xml')
+dead.saveGraphSONSync('/tmp/copy-dead.json')
+
+// Now read back these files
+xmldead = makeEmptyTinker()
+xmldead.loadGraphMLSync('/tmp/copy-dead.xml')
+xmldead
+
+jsondead = makeEmptyTinker()
+jsondead.loadGraphSONSync('/tmp/copy-dead.json')
+jsondead
+
+'goodbye'
+
