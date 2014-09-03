@@ -2,8 +2,8 @@ node > // gremlindocs-side-effects
 node > // See http://gremlindocs.com/#side-effect
 node > 
 node > // ### http://gremlindocs.com/#side-effect/aggregate
-node > // Emits input, but adds input in collection, where provided closure processes input prior to 
-node > // insertion (greedy). In being "greedy", 'aggregate' will exhaust all the items that come to 
+node > // Emits input, but adds input in collection, where provided closure processes input prior to
+node > // insertion (greedy). In being "greedy", 'aggregate' will exhaust all the items that come to
 node > // it from previous steps before emitting the next element.
 node > x = new ArrayList
 '[]'
@@ -18,7 +18,7 @@ node > g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x').property
 [ 29 ]
 node > 
 node > // ### http://gremlindocs.com/#side-effect/groupby
-node > // Emits input, but groups input after processing it by provided key-closure and value-closure. 
+node > // Emits input, but groups input after processing it by provided key-closure and value-closure.
 node > // It is also possible to supply an optional reduce-closure.
 node > g.V().groupBy('{it -> it}', '{it -> it.out}').cap()
 [ { '1': 
@@ -97,7 +97,7 @@ node > m
 '{v[3]=1.5, v[2]=1.0, v[5]=0.5, v[4]=1.0}'
 node > 
 node > // ### http://gremlindocs.com/#side-effect/optional
-node > // Behaves similar to back except that it does not filter. It will go down a particular path and back 
+node > // Behaves similar to back except that it does not filter. It will go down a particular path and back
 node > // up to where it left off. As such, its useful for yielding a side-effect down a particular branch.
 node > g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x')
 [ { age: 29, name: 'marko', _id: '1', _type: 'vertex' } ]
@@ -126,7 +126,7 @@ node > // Trying to do so prevents Mocha from exiting after all tests complete.
 node > // g.V().sideEffect(mySideEffect).iterate(function() {})
 node > 
 node > // ### http://gremlindocs.com/#side-effect/store
-node > // Emits input, but adds input to collection, where provided closure processes input prior to 
+node > // Emits input, but adds input to collection, where provided closure processes input prior to
 node > // insertion (lazy). In being "lazy", 'store' will keep element as they are being requested.
 node > x = new ArrayList
 '[]'
@@ -139,11 +139,17 @@ node > x
 node > x = new ArrayList
 '[]'
 node > g.V('id', '1').out().store(x).next(function (err, val) { })
+node > // We'd like to immediately check the value of x here, but there is a race condition since
+node > // the above statement uses an async callback. As a hack, we execute something else first
+node > // and then check the value of x. This is not absolutely guaranteed to work, but should with very probability.
+node > g.V().out().out().out().id()
+[]
+node > // Ok, now check value of x
 node > x
 '[v[2]]'
 node > 
 node > // ### http://gremlindocs.com/#side-effect/table
-node > // Emits input, but stores row of as values (constrained by column names if provided) in a table. 
+node > // Emits input, but stores row of as values (constrained by column names if provided) in a table.
 node > // Accepts an optional set of closures that are applied in round-robin fashion to each column of the table.
 node > t = new g.Table
 '[]'
@@ -159,7 +165,7 @@ node > t
 '[[x:v[2], name:vadas, age:under thirty], [x:v[1], name:marko, age:under thirty], [x:v[6], name:peter, age:over thirty], [x:v[4], name:josh, age:over thirty]]'
 node > 
 node > // ### http://gremlindocs.com/#side-effect/tree
-node > // Emit input, but stores the tree formed by the traversal as a map. Accepts an optional set of closures 
+node > // Emit input, but stores the tree formed by the traversal as a map. Accepts an optional set of closures
 node > // to be applied in round-robin fashion over each level of the tree.
 node > g.V('id', '1').out().out().tree().cap()
 [ { '1': 
