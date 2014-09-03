@@ -54,4 +54,9 @@ describe('Transcript', function() {
         transcriptTest('gremlindocs-side-effects', done);
     });
 
+    it('should produce the expected transcript given gremlindocs-branch.txt', function(done) {
+        this.timeout(5000);
+        transcriptTest('gremlindocs-branch', done);
+    });
+
 });

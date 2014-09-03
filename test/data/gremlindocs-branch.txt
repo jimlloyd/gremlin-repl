@@ -1,0 +1,35 @@
+// gremlindocs-branch
+// See http://gremlindocs.com/#branch
+
+// ### http://gremlindocs.com/#branch/copysplit
+// Copies incoming object to internal pipes.
+g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).fairMerge()
+g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).exhaustMerge()
+
+// ### http://gremlindocs.com/#branch/exhaustmerge
+// Used in combination with a copySplit, merging the parallel traversals by exhaustively getting the objects 
+// of the first, then the second, etc. (contrast to fairMerge).
+g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).exhaustMerge()
+
+// ### http://gremlindocs.com/#branch/fairmerge
+// Used in combination with a copySplit, merging the parallel traversals in a round-robin fashion.
+// (contrast to exhaustMerge)
+g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).fairMerge()
+
+// ### http://gremlindocs.com/#branch/ifthenelse
+// Allows for if-then-else conditional logic.
+g.V('id','1').out().ifThenElse("{it->it.name=='josh'}","{it->it.age}","{it->it.name}")
+
+// ### http://gremlindocs.com/#branch/loop
+// Loop over a particular set of steps in the pipeline. The first argument is either the number of steps back 
+// in the pipeline to go or a named step. The second argument is a while closure evaluating the current object. 
+// The it component of the loop step closure has three properties that are accessible. These properties can be 
+// used to reason about when to break out of the loop.
+// • it.object: the current object of the traverser.
+// • it.path: the current path of the traverser.
+// • it.loops: the number of times the traverser has looped through the loop section.
+// The final argument is known as the "emit" closure. This boolean-based closure will determine wether the 
+// current object in the loop structure is emitted or not. As such, it is possible to emit intermediate objects, 
+// not simply those at the end of the loop.
+g.V('id','1').out().out()
+g.V('id','1').out().loop(1, '{it -> it.loops < 3}', '{it -> it.object.name=="josh"}' )
