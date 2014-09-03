@@ -70,8 +70,7 @@ t = new g.Table
 g.V().as('x').property('name').as('name').back('x').property('age').as('age').table(t)
 t
 t = new g.Table
-g.V().has('age').as('x').property('name').as('name').back('x').property('age').as('age').
-table(t, '{it->it}', '{it->it}', '{it->it>30 ? "over thirty" : "under thirty"}')
+g.V().has('age').as('x').property('name').as('name').back('x').property('age').as('age').table(t, '{it->it}', '{it->it}', '{it->it>30 ? "over thirty" : "under thirty"}')
 t
 
 // ### http://gremlindocs.com/#side-effect/tree

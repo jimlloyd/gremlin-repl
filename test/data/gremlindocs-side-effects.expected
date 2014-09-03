@@ -153,8 +153,7 @@ node > t
 '[[x:v[3], name:lop, age:null], [x:v[2], name:vadas, age:27], [x:v[1], name:marko, age:29], [x:v[6], name:peter, age:35], [x:v[5], name:ripple, age:null], [x:v[4], name:josh, age:32]]'
 node > t = new g.Table
 '[]'
-node > g.V().has('age').as('x').property('name').as('name').back('x').property('age').as('age').
-... table(t, '{it->it}', '{it->it}', '{it->it>30 ? "over thirty" : "under thirty"}')
+node > g.V().has('age').as('x').property('name').as('name').back('x').property('age').as('age').table(t, '{it->it}', '{it->it}', '{it->it>30 ? "over thirty" : "under thirty"}')
 [ 27, 29, 35, 32 ]
 node > t
 '[[x:v[2], name:vadas, age:under thirty], [x:v[1], name:marko, age:under thirty], [x:v[6], name:peter, age:over thirty], [x:v[4], name:josh, age:over thirty]]'
