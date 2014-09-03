@@ -114,14 +114,13 @@ node > // Emits input, but calls a side effect closure on each input.
 node > // To create a sideEffect that modifies local state, we must create a dynamic proxy using
 node > // node-java's newProxy factory.  The full Java generics type specification is
 node > // `PipeFunction<Vertex, Object>`, but newProxy only needs the non-generic type.
-node > count = 0
-0
-node > var mySideEffect = g.java.newProxy('com.tinkerpop.pipes.PipeFunction', {
-...     compute: function(/* vertex */) {
-.....         count += 1;
-.....         return null;
-.....     }
-... });
+node > // count = 0
+node > // var mySideEffect = g.java.newProxy('com.tinkerpop.pipes.PipeFunction', {
+node > //     compute: function(/* vertex */) {
+node > //         count += 1;
+node > //         return null;
+node > //     }
+node > // });
 node > // TODO: It's not currently possible to execute a side effect like this inside Mocha.
 node > // Trying to do so prevents Mocha from exiting after all tests complete.
 node > // g.V().sideEffect(mySideEffect).iterate(function() {})

@@ -42,13 +42,13 @@ g.V().as('x').outE('knows').inV().has('age', T.gt, 30).optional('x')
 // To create a sideEffect that modifies local state, we must create a dynamic proxy using
 // node-java's newProxy factory.  The full Java generics type specification is
 // `PipeFunction<Vertex, Object>`, but newProxy only needs the non-generic type.
-count = 0
-var mySideEffect = g.java.newProxy('com.tinkerpop.pipes.PipeFunction', {
-    compute: function(/* vertex */) {
-        count += 1;
-        return null;
-    }
-});
+// count = 0
+// var mySideEffect = g.java.newProxy('com.tinkerpop.pipes.PipeFunction', {
+//     compute: function(/* vertex */) {
+//         count += 1;
+//         return null;
+//     }
+// });
 // TODO: It's not currently possible to execute a side effect like this inside Mocha.
 // Trying to do so prevents Mocha from exiting after all tests complete.
 // g.V().sideEffect(mySideEffect).iterate(function() {})
