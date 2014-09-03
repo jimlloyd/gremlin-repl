@@ -262,7 +262,7 @@ node > g.V().out().out().memoize(1).property('name')
 node > g.V().out().as('here').out().memoize('here').property('name')
 [ 'ripple', 'lop' ]
 node > m = new HashMap()
-{}
+'{}'
 node > g.V().out().out().memoize(1, m).property('name')
 [ 'ripple', 'lop' ]
 node > 
@@ -277,12 +277,24 @@ node >
 node > // ### http://gremlindocs.com/#transform/ordermap
 node > // For every incoming map, sort with supplied closure or T.decr or T.incr and emit keys.
 node > g.V().both().groupCount().cap()
-[ { '1': { _value: 3, _key: [Object] },
-    '2': { _value: 1, _key: [Object] },
-    '3': { _value: 3, _key: [Object] },
-    '4': { _value: 3, _key: [Object] },
-    '5': { _value: 1, _key: [Object] },
-    '6': { _value: 1, _key: [Object] } } ]
+[ { '1': 
+     { _value: 3,
+       _key: { age: 29, name: 'marko', _id: '1', _type: 'vertex' } },
+    '2': 
+     { _value: 1,
+       _key: { age: 27, name: 'vadas', _id: '2', _type: 'vertex' } },
+    '3': 
+     { _value: 3,
+       _key: { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } },
+    '4': 
+     { _value: 3,
+       _key: { age: 32, name: 'josh', _id: '4', _type: 'vertex' } },
+    '5': 
+     { _value: 1,
+       _key: { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' } },
+    '6': 
+     { _value: 1,
+       _key: { age: 35, name: 'peter', _id: '6', _type: 'vertex' } } } ]
 node > g.V().both().groupCount().cap().orderMap(T.decr)
 [ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
   { age: 29, name: 'marko', _id: '1', _type: 'vertex' },

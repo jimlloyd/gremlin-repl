@@ -49,4 +49,9 @@ describe('Transcript', function() {
         transcriptTest('gremlindocs-filter', done);
     });
 
+    it('should produce the expected transcript given gremlindocs-side-effects.txt', function(done) {
+        this.timeout(5000);
+        transcriptTest('gremlindocs-side-effects', done);
+    });
+
 });

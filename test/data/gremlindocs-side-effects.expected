@@ -1,0 +1,183 @@
+node > // gremlindocs-side-effects
+node > // See http://gremlindocs.com/#side-effect
+node > 
+node > // ### http://gremlindocs.com/#side-effect/aggregate
+node > // Emits input, but adds input in collection, where provided closure processes input prior to
+node > // insertion (greedy). In being "greedy", 'aggregate' will exhaust all the items that come to
+node > // it from previous steps before emitting the next element.
+node > x = new ArrayList
+'[]'
+node > g.V('id', '1').out().aggregate(x).out().except(x)
+[ { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' } ]
+node > x
+'[v[2], v[4], v[3]]'
+node > 
+node > // ### http://gremlindocs.com/#side-effect/as
+node > // Emits input, but names the previous step.
+node > g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x').property('age')
+[ 29 ]
+node > 
+node > // ### http://gremlindocs.com/#side-effect/groupby
+node > // Emits input, but groups input after processing it by provided key-closure and value-closure.
+node > // It is also possible to supply an optional reduce-closure.
+node > g.V().groupBy('{it -> it}', '{it -> it.out}').cap()
+[ { '1': 
+     { _value: 
+        [ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+          { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+          { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ],
+       _key: { age: 29, name: 'marko', _id: '1', _type: 'vertex' } },
+    '2': 
+     { _value: [],
+       _key: { age: 27, name: 'vadas', _id: '2', _type: 'vertex' } },
+    '3': 
+     { _value: [],
+       _key: { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } },
+    '4': 
+     { _value: 
+        [ { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+          { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ],
+       _key: { age: 32, name: 'josh', _id: '4', _type: 'vertex' } },
+    '5': 
+     { _value: [],
+       _key: { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' } },
+    '6': 
+     { _value: [ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ],
+       _key: { age: 35, name: 'peter', _id: '6', _type: 'vertex' } } } ]
+node > g.V().groupBy('{it -> it}', '{it -> it.out}', '{it->it.size()}').cap()
+[ { '1': 
+     { _value: 3,
+       _key: { age: 29, name: 'marko', _id: '1', _type: 'vertex' } },
+    '2': 
+     { _value: 0,
+       _key: { age: 27, name: 'vadas', _id: '2', _type: 'vertex' } },
+    '3': 
+     { _value: 0,
+       _key: { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } },
+    '4': 
+     { _value: 2,
+       _key: { age: 32, name: 'josh', _id: '4', _type: 'vertex' } },
+    '5': 
+     { _value: 0,
+       _key: { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' } },
+    '6': 
+     { _value: 1,
+       _key: { age: 35, name: 'peter', _id: '6', _type: 'vertex' } } } ]
+node > m = new HashMap
+'{}'
+node > g.V().groupBy(m, '{it -> it}', '{it -> it.out}')
+[ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 35, name: 'peter', _id: '6', _type: 'vertex' },
+  { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+node > m
+'{v[3]=[], v[2]=[], v[1]=[v[2], v[4], v[3]], v[6]=[v[3]], v[5]=[], v[4]=[v[5], v[3]]}'
+node > 
+node > // ### http://gremlindocs.com/#side-effect/groupcount
+node > // Emits input, but updates a map for each input, where closures provides generic map update.
+node > m = new HashMap
+'{}'
+node > g.V().out().groupCount(m)
+[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+  { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > m
+'{v[3]=3, v[2]=1, v[5]=1, v[4]=1}'
+node > m = new HashMap
+'{}'
+node > g.V('id', '1').out().groupCount(m, '{it->it}', '{it->it.b+1.0}').out().groupCount(m, '{it->it}', '{it->it.b+0.5}')
+[ { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > m
+'{v[3]=1.5, v[2]=1.0, v[5]=0.5, v[4]=1.0}'
+node > 
+node > // ### http://gremlindocs.com/#side-effect/optional
+node > // Behaves similar to back except that it does not filter. It will go down a particular path and back
+node > // up to where it left off. As such, its useful for yielding a side-effect down a particular branch.
+node > g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x')
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' } ]
+node > g.V().as('x').outE('knows').inV().has('age', T.gt, 30).optional('x')
+[ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
+  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 35, name: 'peter', _id: '6', _type: 'vertex' },
+  { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+node > 
+node > // ### http://gremlindocs.com/#side-effect/sideeffect
+node > // Emits input, but calls a side effect closure on each input.
+node > // To create a sideEffect that modifies local state, we must create a dynamic proxy using
+node > // node-java's newProxy factory.  The full Java generics type specification is
+node > // `PipeFunction<Vertex, Object>`, but newProxy only needs the non-generic type.
+node > // count = 0
+node > // var mySideEffect = g.java.newProxy('com.tinkerpop.pipes.PipeFunction', {
+node > //     compute: function(/* vertex */) {
+node > //         count += 1;
+node > //         return null;
+node > //     }
+node > // });
+node > // TODO: It's not currently possible to execute a side effect like this inside Mocha.
+node > // Trying to do so prevents Mocha from exiting after all tests complete.
+node > // g.V().sideEffect(mySideEffect).iterate(function() {})
+node > 
+node > // ### http://gremlindocs.com/#side-effect/store
+node > // Emits input, but adds input to collection, where provided closure processes input prior to
+node > // insertion (lazy). In being "lazy", 'store' will keep element as they are being requested.
+node > x = new ArrayList
+'[]'
+node > g.V('id', '1').out().store(x).map()
+[ { age: 27, name: 'vadas' },
+  { age: 32, name: 'josh' },
+  { name: 'lop', lang: 'java' } ]
+node > x
+'[v[2], v[4], v[3]]'
+node > x = new ArrayList
+'[]'
+node > g.V('id', '1').out().store(x).next(function (err, val) { })
+node > // We'd like to immediately check the value of x here, but there is a race condition since
+node > // the above statement uses an async callback. As a hack, we execute something else first
+node > // and then check the value of x. This is not absolutely guaranteed to work, but should with very probability.
+node > g.V().out().out().out().id()
+[]
+node > // Ok, now check value of x
+node > x
+'[v[2]]'
+node > 
+node > // ### http://gremlindocs.com/#side-effect/table
+node > // Emits input, but stores row of as values (constrained by column names if provided) in a table.
+node > // Accepts an optional set of closures that are applied in round-robin fashion to each column of the table.
+node > t = new g.Table
+'[]'
+node > g.V().as('x').property('name').as('name').back('x').property('age').as('age').table(t)
+[ null, 27, 29, 35, null, 32 ]
+node > t
+'[[x:v[3], name:lop, age:null], [x:v[2], name:vadas, age:27], [x:v[1], name:marko, age:29], [x:v[6], name:peter, age:35], [x:v[5], name:ripple, age:null], [x:v[4], name:josh, age:32]]'
+node > t = new g.Table
+'[]'
+node > g.V().has('age').as('x').property('name').as('name').back('x').property('age').as('age').table(t, '{it->it}', '{it->it}', '{it->it>30 ? "over thirty" : "under thirty"}')
+[ 27, 29, 35, 32 ]
+node > t
+'[[x:v[2], name:vadas, age:under thirty], [x:v[1], name:marko, age:under thirty], [x:v[6], name:peter, age:over thirty], [x:v[4], name:josh, age:over thirty]]'
+node > 
+node > // ### http://gremlindocs.com/#side-effect/tree
+node > // Emit input, but stores the tree formed by the traversal as a map. Accepts an optional set of closures
+node > // to be applied in round-robin fashion over each level of the tree.
+node > g.V('id', '1').out().out().tree().cap()
+[ { '1': 
+     { _value: 
+        { '4': 
+           { _value: 
+              { '3': 
+                 { _value: {},
+                   _key: { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } },
+                '5': 
+                 { _value: {},
+                   _key: { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' } } },
+             _key: { age: 32, name: 'josh', _id: '4', _type: 'vertex' } } },
+       _key: { age: 29, name: 'marko', _id: '1', _type: 'vertex' } } } ]
+node > 
