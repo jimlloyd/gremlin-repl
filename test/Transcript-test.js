@@ -11,11 +11,14 @@ var concat = require('concat-stream');
 function transcriptTest(name, done) {
     var expected = fs.readFileSync('test/data/'+name+'.expected', { encoding: 'utf8' });
     var expectedLines = expected.split('\n');
+    var semaphore = require('semaphore');
+
+    var sem = semaphore(0);
 
     var output = concat({encoding: 'string'}, function(data) {
         var dataLines = data.split('\n');
         expect(dataLines).to.deep.equal(expectedLines);
-        done();
+        sem.leave();
     });
 
     var options = {
@@ -24,7 +27,13 @@ function transcriptTest(name, done) {
         output: output,
     };
 
-    repl.start(options);
+    var replServer = repl.start(options);
+
+    replServer.endOfSessionPromise.done(function(){ sem.leave(); });
+
+    sem.take(2, function() {
+        done();
+    });
 }
 
 describe('Transcript', function() {

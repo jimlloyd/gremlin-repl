@@ -180,4 +180,3 @@ node > g.V('id', '1').out().out().tree().cap()
                    _key: { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' } } },
              _key: { age: 32, name: 'josh', _id: '4', _type: 'vertex' } } },
        _key: { age: 29, name: 'marko', _id: '1', _type: 'vertex' } } } ]
-node > 

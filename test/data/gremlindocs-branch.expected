@@ -41,4 +41,3 @@ node > g.V('id','1').out().out()
   { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
 node > g.V('id','1').out().loop(1, '{it -> it.loops < 3}', '{it -> it.object.name=="josh"}' )
 [ { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
-node > 

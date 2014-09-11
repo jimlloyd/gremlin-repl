@@ -82,4 +82,3 @@ node > var x = new g.ArrayList()
 node > g.V('id', '1').out().aggregate(x).out().retain(x)
 [ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
 node > 
-node > 
