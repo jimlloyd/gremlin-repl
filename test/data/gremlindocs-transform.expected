@@ -462,4 +462,3 @@ node > g.V('name', 'marko')
 [ { age: 29, name: 'marko', _id: '1', _type: 'vertex' } ]
 node > g.V('name', 'marko').property('name')
 [ 'marko' ]
-node > 

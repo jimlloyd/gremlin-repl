@@ -145,4 +145,3 @@ node > g.V('id','1').out().in().id()
 [ '1', '1', '1', '4', '6' ]
 node > g.V('id','1').out().in().simplePath().id()
 [ '4', '6' ]
-node > 
