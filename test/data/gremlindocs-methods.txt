@@ -1,0 +1,152 @@
+// gremlindocs-methods
+// See http://gremlindocs.com/#methods
+
+// ### http://gremlindocs.com/#methods/element-keys
+// Get the property keys of an element.
+// TODO: Not implemented.
+
+// http://gremlindocs.com/#methods/element-remove
+g.E().property('weight');
+var deferred = Q.defer();
+g.E().has('weight',T.lt,g.java.newFloat(0.5)).remove(deferred.makeNodeResolver()) // No removeSync
+deferred.promise
+g.E().property('weight')     // now show that the edges with weights<0.5 were removed.
+var g = makeDemoTinker()         // restore the demo graph
+g.E().property('weight')     // now show that all edges restored.
+
+// ### http://gremlindocs.com/#methods/element-values
+// Gets the property values of an element.
+// TODO: Not implemented.
+
+// http://gremlindocs.com/#methods/graph-addedge
+// Adds an edge to the graph. Note that most graph implementations ignore the identifier supplied to addEdge.
+var t = makeEmptyTinker()
+var d1 = Q.defer()
+var d2 = Q.defer()
+t.addVertex(null, d1.makeNodeResolver())
+t.addVertex(null, d2.makeNodeResolver())
+var v1 = d1.promise
+var v2 = d2.promise
+var d3 = Q.defer()
+t.addEdge(null, v1, v2, 'friend', d3.makeNodeResolver())
+var edge = d3.promise
+v1
+v2
+edge
+
+// http://gremlindocs.com/#methods/graph-addvertex
+// Note, here we are relying on the experimental promises version!
+// This won't work if we push to Travis or publish it any other way.
+t = makeEmptyTinker()
+t.addVertexP()
+t.addVertexP()
+t.addVertexP(100)
+// But our addVertex currently ignores passed in properties
+t.addVertexP(null, {name: 'stephen'})
+
+// http://gremlindocs.com/#methods/graph-e
+g = makeDemoTinker()
+g.e('10')
+g.e('10', '11', '12')
+g.e(['10', '11', '12'])
+var pipe = g.e(['10', '11', '12'])
+pipe.id()
+
+// http://gremlindocs.com/#methods/graph-load
+// Load a file from one of several standard formats such as GraphML, GML, or GraphSON.
+// Note: gremlin-node currently limited to GraphML.
+toy = makeEmptyTinker()
+toy.loadGraphMLSync('toy-example.xml')
+toy
+dead = makeEmptyTinker()
+dead.loadGraphMLSync('grateful-dead.xml')
+dead
+
+// http://gremlindocs.com/#methods/graph-save
+// Save a graph to file given one of several standard formats such as GraphML, GML, or GraphSON.
+// Note: gremlin-node currently limited to GraphML.
+dead.saveGraphMLSync('/tmp/copy-dead.xml')
+dead.saveGraphSONSync('/tmp/copy-dead.json')
+
+// Now read back these files
+xmldead = makeEmptyTinker()
+xmldead.loadGraphMLSync('/tmp/copy-dead.xml')
+xmldead
+
+jsondead = makeEmptyTinker()
+jsondead.loadGraphSONSync('/tmp/copy-dead.json')
+jsondead
+
+// http://gremlindocs.com/#methods/graph-v
+// Get a vertex or set of vertices by providing one or more vertex identifiers. The identifiers
+// must be the identifiers assigned by the underlying graph implementation.
+g = makeDemoTinker()
+g.v('2')
+g.v('1', '2','4')
+g.v(['1', '2','4'])
+var pipe = g.v(['1', '2','4'])
+pipe.id()
+
+// http://gremlindocs.com/#methods/index-map-entry
+// Look up a value in an index.
+// TODO: Not yet implemented in gremlin-node.
+
+// http://gremlindocs.com/#methods/pipe-enablepath
+// If the path information is required internal to a closure, Gremlin doesn’t know that as it can
+// not interpret what is in a closure. As such, be sure to use GremlinPipeline.enablePath() if path
+// information will be required by the expression.
+// TODO: Not easy to replicate this snippet at this time
+
+// http://gremlindocs.com/#methods/pipe-fill
+// Takes all the results in the pipeline and puts them into the provided collection.
+var m = new ArrayList()
+var d = Q.defer()
+g.V('id', '1').out().fill(m, d.makeNodeResolver())
+d.promise
+m
+
+// http://gremlindocs.com/#methods/pipe-iterate
+// Calls Pipe.next for all objects in the pipe. This is an important notion
+// to follow when considering the behavior of the Gremlin Console. The
+// Gremlin Console iterates through the pipeline automatically and outputs
+// the results. Outside of the Gremlin Console or if more than one
+// statement is present on a single line of the Gremlin Console, iterating
+// the pipe must be done manually. Read more about this topic in the
+// Gremlin Wiki Troubleshooting Page.
+//
+// There are some important things to note in the example below. Had the
+// the first line of Gremlin been executed separately, as opposed to being
+// placed on the same line separated by a semi-colon, the names of all the
+// vertices would have changed because the Gremlin Console would have
+// automatically iterated the pipe and processed the side-effects.
+//
+// TODO: implement this test
+
+// http://gremlindocs.com/#methods/pipe-next
+// Gets the next object in the pipe or the next n objects. This is an
+// important notion to follow when considering the behavior of the Gremlin
+// Console. The Gremlin Console iterates through the pipeline automatically
+// and outputs the results. Outside of the Gremlin Console or if more than
+// one statement is present on a single line of the Gremlin Console,
+// iterating the pipe must be done manually. Read more about this topic in
+// the Gremlin Wiki Troubleshooting Page.
+//
+// There are some important things to note in the example below. Had the
+// the first line of Gremlin been executed separately, as opposed to being
+// placed on the same line separated by a semi-colon, the name of the
+// vertex would have changed because the Gremlin Console would have
+// automatically iterated the pipe and processed the side-effect.
+//
+// TODO: Our next() does not take the optional integer n.
+// TODO: Our node console doesn't implement the weird semantics of the
+// Groovy Gremlin console for when there is more than one statement present
+// on a single line. Should we try to mimic that behavior? Seems unnecessary.
+
+g = makeDemoTinker()
+var d = Q.defer()
+g.V().sideEffect('{it -> it.name="same-again"}').next(d.makeNodeResolver())
+d.promise
+g.V().property('name')
+
+'goodbye'
+

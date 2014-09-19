@@ -1,0 +1,12 @@
+// Simple examples of using Q promises in a REPL script.
+var d = Q.defer()
+d.resolve('testing 1,2,3.')
+d.promise
+
+var d1 = Q.defer()
+var d2 = Q.defer()
+var timers = require('timers')
+var ignore1 = timers.setTimeout(function() { d1.resolve(23); }, 60)
+var ignore2 = timers.setTimeout(function() { d2.resolve(42); }, 50)
+Q.all([d1.promise, d2.promise])
+

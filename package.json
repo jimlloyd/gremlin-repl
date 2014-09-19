@@ -14,9 +14,10 @@
   "author": "Jim Lloyd",
   "license": "ISC",
   "dependencies": {
-    "gremlin": "^0.3.12",
+    "debug": "^2.0.0",
+    "gremlin": "git://github.com/jimlloyd/gremlin-node#feature/promises-api-2",
     "lodash": "^2.4.1",
-    "repl-promise": "0.0.3"
+    "repl-promise": "0.0.4"
   },
   "directories": {
     "test": "test"
@@ -42,6 +43,7 @@
   "jshintConfig": {
     "node": true,
     "globalstrict": false,
+    "indent": 2,
     "globals": {
       "expect": true,
       "describe": true,
