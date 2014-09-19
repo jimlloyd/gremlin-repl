@@ -46,14 +46,11 @@ t.addVertexP(null, {name: 'stephen'})
 
 // http://gremlindocs.com/#methods/graph-e
 g = makeDemoTinker()
-var d1 = Q.defer()
-g.e('10', d1.makeNodeResolver())
-var d2 = Q.defer()
-g.e('10', '11', '12', d2.makeNodeResolver())
-d2.promise
-var d3 = Q.defer()
-g.e(['10', '11', '12'], d3.makeNodeResolver())
-d3.promise
+g.e('10')
+g.e('10', '11', '12')
+g.e(['10', '11', '12'])
+var pipe = g.e(['10', '11', '12'])
+pipe.id()
 
 // http://gremlindocs.com/#methods/graph-load
 // Load a file from one of several standard formats such as GraphML, GML, or GraphSON.
@@ -79,6 +76,16 @@ xmldead
 jsondead = makeEmptyTinker()
 jsondead.loadGraphSONSync('/tmp/copy-dead.json')
 jsondead
+
+// http://gremlindocs.com/#methods/graph-v
+// Get a vertex or set of vertices by providing one or more vertex identifiers. The identifiers
+// must be the identifiers assigned by the underlying graph implementation.
+g = makeDemoTinker()
+g.v('2')
+g.v('1', '2','4')
+g.v(['1', '2','4'])
+var pipe = g.v(['1', '2','4'])
+pipe.id()
 
 'goodbye'
 

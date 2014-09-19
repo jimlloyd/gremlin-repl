@@ -62,11 +62,14 @@ node >
 node > // http://gremlindocs.com/#methods/graph-e
 node > g = makeDemoTinker()
 [ 'tinkergraph[vertices:6 edges:6]' ]
-node > var d1 = Q.defer()
-node > g.e('10', d1.makeNodeResolver())
-node > var d2 = Q.defer()
-node > g.e('10', '11', '12', d2.makeNodeResolver())
-node > d2.promise
+node > g.e('10')
+[ { weight: 1,
+    _id: '10',
+    _type: 'edge',
+    _outV: '4',
+    _inV: '5',
+    _label: 'created' } ]
+node > g.e('10', '11', '12')
 [ { weight: 1,
     _id: '10',
     _type: 'edge',
@@ -85,9 +88,7 @@ node > d2.promise
     _outV: '6',
     _inV: '3',
     _label: 'created' } ]
-node > var d3 = Q.defer()
-node > g.e(['10', '11', '12'], d3.makeNodeResolver())
-node > d3.promise
+node > g.e(['10', '11', '12'])
 [ { weight: 1,
     _id: '10',
     _type: 'edge',
@@ -106,6 +107,9 @@ node > d3.promise
     _outV: '6',
     _inV: '3',
     _label: 'created' } ]
+node > var pipe = g.e(['10', '11', '12'])
+node > pipe.id()
+[ '10', '11', '12' ]
 node > 
 node > // http://gremlindocs.com/#methods/graph-load
 node > // Load a file from one of several standard formats such as GraphML, GML, or GraphSON.
@@ -139,6 +143,25 @@ node > jsondead = makeEmptyTinker()
 node > jsondead.loadGraphSONSync('/tmp/copy-dead.json')
 node > jsondead
 [ 'tinkergraph[vertices:809 edges:8049]' ]
+node > 
+node > // http://gremlindocs.com/#methods/graph-v
+node > // Get a vertex or set of vertices by providing one or more vertex identifiers. The identifiers
+node > // must be the identifiers assigned by the underlying graph implementation.
+node > g = makeDemoTinker()
+[ 'tinkergraph[vertices:6 edges:6]' ]
+node > g.v('2')
+[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' } ]
+node > g.v('1', '2','4')
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+node > g.v(['1', '2','4'])
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+node > var pipe = g.v(['1', '2','4'])
+node > pipe.id()
+[ '1', '2', '4' ]
 node > 
 node > 'goodbye'
 'goodbye'
