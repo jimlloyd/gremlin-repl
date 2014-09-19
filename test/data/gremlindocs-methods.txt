@@ -87,5 +87,66 @@ g.v(['1', '2','4'])
 var pipe = g.v(['1', '2','4'])
 pipe.id()
 
+// http://gremlindocs.com/#methods/index-map-entry
+// Look up a value in an index.
+// TODO: Not yet implemented in gremlin-node.
+
+// http://gremlindocs.com/#methods/pipe-enablepath
+// If the path information is required internal to a closure, Gremlin doesn’t know that as it can
+// not interpret what is in a closure. As such, be sure to use GremlinPipeline.enablePath() if path
+// information will be required by the expression.
+// TODO: Not easy to replicate this snippet at this time
+
+// http://gremlindocs.com/#methods/pipe-fill
+// Takes all the results in the pipeline and puts them into the provided collection.
+var m = new ArrayList()
+var d = Q.defer()
+g.V('id', '1').out().fill(m, d.makeNodeResolver())
+d.promise
+m
+
+// http://gremlindocs.com/#methods/pipe-iterate
+// Calls Pipe.next for all objects in the pipe. This is an important notion
+// to follow when considering the behavior of the Gremlin Console. The
+// Gremlin Console iterates through the pipeline automatically and outputs
+// the results. Outside of the Gremlin Console or if more than one
+// statement is present on a single line of the Gremlin Console, iterating
+// the pipe must be done manually. Read more about this topic in the
+// Gremlin Wiki Troubleshooting Page.
+//
+// There are some important things to note in the example below. Had the
+// the first line of Gremlin been executed separately, as opposed to being
+// placed on the same line separated by a semi-colon, the names of all the
+// vertices would have changed because the Gremlin Console would have
+// automatically iterated the pipe and processed the side-effects.
+//
+// TODO: implement this test
+
+// http://gremlindocs.com/#methods/pipe-next
+// Gets the next object in the pipe or the next n objects. This is an
+// important notion to follow when considering the behavior of the Gremlin
+// Console. The Gremlin Console iterates through the pipeline automatically
+// and outputs the results. Outside of the Gremlin Console or if more than
+// one statement is present on a single line of the Gremlin Console,
+// iterating the pipe must be done manually. Read more about this topic in
+// the Gremlin Wiki Troubleshooting Page.
+//
+// There are some important things to note in the example below. Had the
+// the first line of Gremlin been executed separately, as opposed to being
+// placed on the same line separated by a semi-colon, the name of the
+// vertex would have changed because the Gremlin Console would have
+// automatically iterated the pipe and processed the side-effect.
+//
+// TODO: Our next() does not take the optional integer n.
+// TODO: Our node console doesn't implement the weird semantics of the
+// Groovy Gremlin console for when there is more than one statement present
+// on a single line. Should we try to mimic that behavior? Seems unnecessary.
+
+g = makeDemoTinker()
+var d = Q.defer()
+g.V().sideEffect('{it -> it.name="same-again"}').next(d.makeNodeResolver())
+d.promise
+g.V().property('name')
+
 'goodbye'
 

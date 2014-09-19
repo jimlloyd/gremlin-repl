@@ -163,6 +163,72 @@ node > var pipe = g.v(['1', '2','4'])
 node > pipe.id()
 [ '1', '2', '4' ]
 node > 
+node > // http://gremlindocs.com/#methods/index-map-entry
+node > // Look up a value in an index.
+node > // TODO: Not yet implemented in gremlin-node.
+node > 
+node > // http://gremlindocs.com/#methods/pipe-enablepath
+node > // If the path information is required internal to a closure, Gremlin doesn’t know that as it can
+node > // not interpret what is in a closure. As such, be sure to use GremlinPipeline.enablePath() if path
+node > // information will be required by the expression.
+node > // TODO: Not easy to replicate this snippet at this time
+node > 
+node > // http://gremlindocs.com/#methods/pipe-fill
+node > // Takes all the results in the pipeline and puts them into the provided collection.
+node > var m = new ArrayList()
+node > var d = Q.defer()
+node > g.V('id', '1').out().fill(m, d.makeNodeResolver())
+node > d.promise
+'[v[2], v[4], v[3]]'
+node > m
+'[v[2], v[4], v[3]]'
+node > 
+node > // http://gremlindocs.com/#methods/pipe-iterate
+node > // Calls Pipe.next for all objects in the pipe. This is an important notion
+node > // to follow when considering the behavior of the Gremlin Console. The
+node > // Gremlin Console iterates through the pipeline automatically and outputs
+node > // the results. Outside of the Gremlin Console or if more than one
+node > // statement is present on a single line of the Gremlin Console, iterating
+node > // the pipe must be done manually. Read more about this topic in the
+node > // Gremlin Wiki Troubleshooting Page.
+node > //
+node > // There are some important things to note in the example below. Had the
+node > // the first line of Gremlin been executed separately, as opposed to being
+node > // placed on the same line separated by a semi-colon, the names of all the
+node > // vertices would have changed because the Gremlin Console would have
+node > // automatically iterated the pipe and processed the side-effects.
+node > //
+node > // TODO: implement this test
+node > 
+node > // http://gremlindocs.com/#methods/pipe-next
+node > // Gets the next object in the pipe or the next n objects. This is an
+node > // important notion to follow when considering the behavior of the Gremlin
+node > // Console. The Gremlin Console iterates through the pipeline automatically
+node > // and outputs the results. Outside of the Gremlin Console or if more than
+node > // one statement is present on a single line of the Gremlin Console,
+node > // iterating the pipe must be done manually. Read more about this topic in
+node > // the Gremlin Wiki Troubleshooting Page.
+node > //
+node > // There are some important things to note in the example below. Had the
+node > // the first line of Gremlin been executed separately, as opposed to being
+node > // placed on the same line separated by a semi-colon, the name of the
+node > // vertex would have changed because the Gremlin Console would have
+node > // automatically iterated the pipe and processed the side-effect.
+node > //
+node > // TODO: Our next() does not take the optional integer n.
+node > // TODO: Our node console doesn't implement the weird semantics of the
+node > // Groovy Gremlin console for when there is more than one statement present
+node > // on a single line. Should we try to mimic that behavior? Seems unnecessary.
+node > 
+node > g = makeDemoTinker()
+[ 'tinkergraph[vertices:6 edges:6]' ]
+node > var d = Q.defer()
+node > g.V().sideEffect('{it -> it.name="same-again"}').next(d.makeNodeResolver())
+node > d.promise
+[ { name: 'same-again', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > g.V().property('name')
+[ 'same-again', 'vadas', 'marko', 'peter', 'ripple', 'josh' ]
+node > 
 node > 'goodbye'
 'goodbye'
 node > 
