@@ -3,20 +3,32 @@ node > // See http://gremlindocs.com/#transform
 node > 
 node > // ### http://gremlindocs.com/#transform/_
 node > // Identity turns an arbitrary object into a "pipeline".
-node > // NOT WORKING
-node > // The syntax for javascript will need to be different.
-node > // Gremlin-node might already support this but how?
-node > 
-node > // We'd lie to be able to do this
-node > // var x = [1,2,3]
-node > // x._()
-node > // x._().transform('{it -> it+1}')
-node > 
-node > // While playing around I discovered this:
+node > // In gremlin-node the _() does not work as in groovy,
+node > // and in fact doesn't seem to be useful it any way.
+node > // It cannot start a pipeline from a non-pipeline object,
+node > // and when chained onto the end of a pipeline seems
+node > // to just do an identity (no-op) operation:
+node > g
+[ 'tinkergraph[vertices:6 edges:6]' ]
 node > g._()
 [ 'tinkergraph[vertices:6 edges:6]' ]
-node > t._()
-[ 'tinkergraph[vertices:0 edges:0]' ]
+node > g.V().id()
+[ '3', '2', '1', '6', '5', '4' ]
+node > g.V().id()._()
+[ '3', '2', '1', '6', '5', '4' ]
+node > 
+node > // But it is possible with node gremlin to make a pipeline
+node > // from an array, using the start() pipeline step, as follows:
+node > var x = [17, 23, 42]
+node > var a = new ArrayList()
+node > x.map(function(e) { a.addSync(e); })
+[ undefined, undefined, undefined ]
+node > a
+'[17, 23, 42]'
+node > g.start(a.iteratorSync())
+[ 17, 23, 42 ]
+node > g.start(a.iteratorSync()).transform('{it -> it+1}')
+[ 18, 24, 43 ]
 node > 
 node > // ### http://gremlindocs.com/#transform/both
 node > // Get both adjacent vertices of the vertex, the in and the out.
@@ -252,10 +264,10 @@ node > g.V().map('id', 'age')
   { id: '4', age: 32 } ]
 node > 
 node > // ### http://gremlindocs.com/#transform/memoize
-node > // Remembers a particular mapping from input to output. Long or expensive expressions with no 
-node > // side effects can use this step to remember a mapping, which helps reduce load when previously 
+node > // Remembers a particular mapping from input to output. Long or expensive expressions with no
+node > // side effects can use this step to remember a mapping, which helps reduce load when previously
 node > // processed objects are passed into it.
-node > // For situations where memoization may consume large amounts of RAM, consider using an embedded 
+node > // For situations where memoization may consume large amounts of RAM, consider using an embedded
 node > // key-value store like JDBM or some other persistent Map implementation.
 node > g.V().out().out().memoize(1).property('name')
 [ 'ripple', 'lop' ]
@@ -267,7 +279,7 @@ node > g.V().out().out().memoize(1, m).property('name')
 [ 'ripple', 'lop' ]
 node > 
 node > // ### http://gremlindocs.com/#transform/order
-node > // Order the items in the stream according to the closure if provided. If no closure is provided, 
+node > // Order the items in the stream according to the closure if provided. If no closure is provided,
 node > // then a default sort order is used.
 node > g.V().property('name').order()
 [ 'josh', 'lop', 'marko', 'peter', 'ripple', 'vadas' ]
@@ -350,8 +362,8 @@ node > g.E('id', '12').bothV().id()
 [ '6', '3' ]
 node > 
 node > // ### http://gremlindocs.com/#transform/path
-node > // Gets the path through the pipeline up to this point, where closures are post-processing for 
-node > // each object in the path. If the path step is provided closures then, in a round robin fashion, 
+node > // Gets the path through the pipeline up to this point, where closures are post-processing for
+node > // each object in the path. If the path step is provided closures then, in a round robin fashion,
 node > // the closures are evaluated over each object of the path and that post-processed path is returned.
 node > g.V('id', '1').out().path()
 [ [ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
@@ -394,7 +406,7 @@ node > g.V('id', '1').outE().inV().property('name').path()
     'lop' ] ]
 node > 
 node > // ### http://gremlindocs.com/#transform/scatter
-node > // Unroll all objects in the iterable at that step. Gather/Scatter is good for breadth-first 
+node > // Unroll all objects in the iterable at that step. Gather/Scatter is good for breadth-first
 node > // traversals where the gather closure filters out unwanted elements at the current radius.
 node > g.V('id', '1').out()
 [ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
@@ -428,7 +440,7 @@ node >
 node > // ### http://gremlindocs.com/#transform/shuffle
 node > // Collect all objects up to that step into a list and randomize their order.
 node > // g.V('id', '1').out().shuffle()
-node > // shuffle() does the right thing, but because it randomizes we can't use it directly 
+node > // shuffle() does the right thing, but because it randomizes we can't use it directly
 node > // and expect repeatable results. So we sort the results afterwards to get repeatability.
 node > g.V('id', '1').out().shuffle().order('{it -> it.a.name <=> it.b.name}')
 [ { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
@@ -447,7 +459,7 @@ node > g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().transform('{it -> 
 [ { id: '4', age: 32 }, { id: '1', age: 29 } ]
 node > 
 node > // ### http://gremlindocs.com/#transform/v
-node > // The vertex iterator for the graph. Utilize this to iterate through all the vertices in the graph. 
+node > // The vertex iterator for the graph. Utilize this to iterate through all the vertices in the graph.
 node > // Use with care on large graphs unless used in combination with a key index lookup.
 node > g.V()
 [ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },

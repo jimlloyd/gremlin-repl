@@ -49,14 +49,14 @@ node > // Note, here we are relying on the experimental promises version!
 node > // This won't work if we push to Travis or publish it any other way.
 node > t = makeEmptyTinker()
 [ 'tinkergraph[vertices:0 edges:0]' ]
-node > t.addVertexP()
+node > t.addVertex()
 [ { _id: '0', _type: 'vertex' } ]
-node > t.addVertexP()
+node > t.addVertex()
 [ { _id: '1', _type: 'vertex' } ]
-node > t.addVertexP(100)
+node > t.addVertex(100)
 [ { _id: '100', _type: 'vertex' } ]
 node > // But our addVertex currently ignores passed in properties
-node > t.addVertexP(null, {name: 'stephen'})
+node > t.addVertex(null, {name: 'stephen'})
 [ { _id: '2', _type: 'vertex' } ]
 node > 
 node > // http://gremlindocs.com/#methods/graph-e
@@ -147,6 +147,16 @@ node >
 node > // http://gremlindocs.com/#methods/graph-v
 node > // Get a vertex or set of vertices by providing one or more vertex identifiers. The identifiers
 node > // must be the identifiers assigned by the underlying graph implementation.
+node > // Note that with the gremlin-node implementation, the v() operator can take a callback or not.
+node > // If a callback is not provided, the return result is a **Promise** for a PipelineWrapper.
+node > // Note that the groovy console returns a vertex with only one id is passed in, and a pipeline
+node > // when more than one vertex is passed in. In gremlin-node we always return promise for a pipeline.
+node > // Because the result is a promise, it it not possible to chain more pipeline steps,
+node > // as in g.v('2').out().id().
+node > // Also, in the console, if a var assignment is not used, the promise is resolved immediately,
+node > // exhausting the pipeline without running other steps.
+node > // However, if a variable is assigned the promise, then the variable can be used to start a pipeline.
+node > // See example at end using 'var pipe = ...'.
 node > g = makeDemoTinker()
 [ 'tinkergraph[vertices:6 edges:6]' ]
 node > g.v('2')
@@ -159,9 +169,9 @@ node > g.v(['1', '2','4'])
 [ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
   { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
   { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
-node > var pipe = g.v(['1', '2','4'])
-node > pipe.id()
-[ '1', '2', '4' ]
+node > var pipe = g.v('1')
+node > pipe.out().id()
+[ '2', '4', '3' ]
 node > 
 node > // http://gremlindocs.com/#methods/index-map-entry
 node > // Look up a value in an index.
@@ -175,12 +185,21 @@ node > // TODO: Not easy to replicate this snippet at this time
 node > 
 node > // http://gremlindocs.com/#methods/pipe-fill
 node > // Takes all the results in the pipeline and puts them into the provided collection.
+node > // fill() can be called using either a callback API or a promise API:
+node > // We use a promise here to make a callback with d.makeNodeResolver(),
+node > // but as far as fill() is concerned, it is being called with a regular node callback function.
 node > var m = new ArrayList()
 node > var d = Q.defer()
 node > g.V('id', '1').out().fill(m, d.makeNodeResolver())
 node > d.promise
 '[v[2], v[4], v[3]]'
 node > m
+'[v[2], v[4], v[3]]'
+node > // Here we truly use the promise API
+node > var n = new ArrayList()
+node > g.V('id', '1').out().fill(n)
+'[v[2], v[4], v[3]]'
+node > n
 '[v[2], v[4], v[3]]'
 node > 
 node > // http://gremlindocs.com/#methods/pipe-iterate

@@ -38,11 +38,11 @@ edge
 // Note, here we are relying on the experimental promises version!
 // This won't work if we push to Travis or publish it any other way.
 t = makeEmptyTinker()
-t.addVertexP()
-t.addVertexP()
-t.addVertexP(100)
+t.addVertex()
+t.addVertex()
+t.addVertex(100)
 // But our addVertex currently ignores passed in properties
-t.addVertexP(null, {name: 'stephen'})
+t.addVertex(null, {name: 'stephen'})
 
 // http://gremlindocs.com/#methods/graph-e
 g = makeDemoTinker()
@@ -80,12 +80,22 @@ jsondead
 // http://gremlindocs.com/#methods/graph-v
 // Get a vertex or set of vertices by providing one or more vertex identifiers. The identifiers
 // must be the identifiers assigned by the underlying graph implementation.
+// Note that with the gremlin-node implementation, the v() operator can take a callback or not.
+// If a callback is not provided, the return result is a **Promise** for a PipelineWrapper.
+// Note that the groovy console returns a vertex with only one id is passed in, and a pipeline
+// when more than one vertex is passed in. In gremlin-node we always return promise for a pipeline.
+// Because the result is a promise, it it not possible to chain more pipeline steps,
+// as in g.v('2').out().id().
+// Also, in the console, if a var assignment is not used, the promise is resolved immediately,
+// exhausting the pipeline without running other steps.
+// However, if a variable is assigned the promise, then the variable can be used to start a pipeline.
+// See example at end using 'var pipe = ...'.
 g = makeDemoTinker()
 g.v('2')
 g.v('1', '2','4')
 g.v(['1', '2','4'])
-var pipe = g.v(['1', '2','4'])
-pipe.id()
+var pipe = g.v('1')
+pipe.out().id()
 
 // http://gremlindocs.com/#methods/index-map-entry
 // Look up a value in an index.
@@ -99,11 +109,18 @@ pipe.id()
 
 // http://gremlindocs.com/#methods/pipe-fill
 // Takes all the results in the pipeline and puts them into the provided collection.
+// fill() can be called using either a callback API or a promise API:
+// We use a promise here to make a callback with d.makeNodeResolver(),
+// but as far as fill() is concerned, it is being called with a regular node callback function.
 var m = new ArrayList()
 var d = Q.defer()
 g.V('id', '1').out().fill(m, d.makeNodeResolver())
 d.promise
 m
+// Here we truly use the promise API
+var n = new ArrayList()
+g.V('id', '1').out().fill(n)
+n
 
 // http://gremlindocs.com/#methods/pipe-iterate
 // Calls Pipe.next for all objects in the pipe. This is an important notion
