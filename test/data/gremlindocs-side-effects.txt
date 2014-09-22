@@ -38,20 +38,14 @@ g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x')
 g.V().as('x').outE('knows').inV().has('age', T.gt, 30).optional('x')
 
 // ### http://gremlindocs.com/#side-effect/sideeffect
-// Emits input, but calls a side effect closure on each input.
-// To create a sideEffect that modifies local state, we must create a dynamic proxy using
-// node-java's newProxy factory.  The full Java generics type specification is
-// `PipeFunction<Vertex, Object>`, but newProxy only needs the non-generic type.
-// count = 0
-// var mySideEffect = g.java.newProxy('com.tinkerpop.pipes.PipeFunction', {
-//     compute: function(/* vertex */) {
-//         count += 1;
-//         return null;
-//     }
-// });
-// TODO: It's not currently possible to execute a side effect like this inside Mocha.
-// Trying to do so prevents Mocha from exiting after all tests complete.
-// g.V().sideEffect(mySideEffect).iterate(function() {})
+// Actually, the example at gremlindocs.com can't be done here.
+// But there is a good example of sideEffect at http://markorodriguez.com/2011/08/03/on-the-nature-of-pipes/
+// Note that x stores the value of the iterator (a vertex) in the sideEffect step, and then x is used
+// in the final filter step.
+g.V('id', '1').sideEffect('{it -> x=it}')
+g.V('id', '1').sideEffect('{it -> x=it}').out('created')
+g.V('id', '1').sideEffect('{it -> x=it}').out('created').in('created')
+g.V('id', '1').sideEffect('{it -> x=it}').out('created').in('created').filter('{it -> it != x}')
 
 // ### http://gremlindocs.com/#side-effect/store
 // Emits input, but adds input to collection, where provided closure processes input prior to
@@ -82,3 +76,6 @@ t
 // Emit input, but stores the tree formed by the traversal as a map. Accepts an optional set of closures
 // to be applied in round-robin fashion over each level of the tree.
 g.V('id', '1').out().out().tree().cap()
+
+'goodbye'
+
