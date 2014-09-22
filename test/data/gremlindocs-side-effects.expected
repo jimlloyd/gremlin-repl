@@ -110,20 +110,21 @@ node > g.V().as('x').outE('knows').inV().has('age', T.gt, 30).optional('x')
   { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
 node > 
 node > // ### http://gremlindocs.com/#side-effect/sideeffect
-node > // Emits input, but calls a side effect closure on each input.
-node > // To create a sideEffect that modifies local state, we must create a dynamic proxy using
-node > // node-java's newProxy factory.  The full Java generics type specification is
-node > // `PipeFunction<Vertex, Object>`, but newProxy only needs the non-generic type.
-node > // count = 0
-node > // var mySideEffect = g.java.newProxy('com.tinkerpop.pipes.PipeFunction', {
-node > //     compute: function(/* vertex */) {
-node > //         count += 1;
-node > //         return null;
-node > //     }
-node > // });
-node > // TODO: It's not currently possible to execute a side effect like this inside Mocha.
-node > // Trying to do so prevents Mocha from exiting after all tests complete.
-node > // g.V().sideEffect(mySideEffect).iterate(function() {})
+node > // Actually, the example at gremlindocs.com can't be done here.
+node > // But there is a good example of sideEffect at http://markorodriguez.com/2011/08/03/on-the-nature-of-pipes/
+node > // Note that x stores the value of the iterator (a vertex) in the sideEffect step, and then x is used
+node > // in the final filter step.
+node > g.V('id', '1').sideEffect('{it -> x=it}')
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' } ]
+node > g.V('id', '1').sideEffect('{it -> x=it}').out('created')
+[ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+node > g.V('id', '1').sideEffect('{it -> x=it}').out('created').in('created')
+[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
+  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { age: 35, name: 'peter', _id: '6', _type: 'vertex' } ]
+node > g.V('id', '1').sideEffect('{it -> x=it}').out('created').in('created').filter('{it -> it != x}')
+[ { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
+  { age: 35, name: 'peter', _id: '6', _type: 'vertex' } ]
 node > 
 node > // ### http://gremlindocs.com/#side-effect/store
 node > // Emits input, but adds input to collection, where provided closure processes input prior to
@@ -180,3 +181,7 @@ node > g.V('id', '1').out().out().tree().cap()
                    _key: { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' } } },
              _key: { age: 32, name: 'josh', _id: '4', _type: 'vertex' } } },
        _key: { age: 29, name: 'marko', _id: '1', _type: 'vertex' } } } ]
+node > 
+node > 'goodbye'
+'goodbye'
+node > 
