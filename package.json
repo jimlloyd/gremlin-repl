@@ -17,7 +17,7 @@
     "debug": "^2.0.0",
     "gremlin": "git://github.com/jimlloyd/gremlin-node#feature/promises-api-3",
     "lodash": "^2.4.1",
-    "repl-promise": "0.0.4"
+    "repl-promise": "0.0.5"
   },
   "directories": {
     "test": "test"

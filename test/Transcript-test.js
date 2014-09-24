@@ -22,7 +22,7 @@ function transcriptTest(name, done) {
 
     var options = {
         prompt: 'node > ',
-        input: fs.createReadStream('test/data/'+name+'.txt'),
+        input: 'test/data/'+name+'.txt',
         output: output,
     };
 
