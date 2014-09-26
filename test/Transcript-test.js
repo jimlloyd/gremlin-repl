@@ -22,7 +22,7 @@ function transcriptTest(name, done) {
 
     var options = {
         prompt: 'node > ',
-        input: fs.createReadStream('test/data/'+name+'.txt'),
+        input: 'test/data/'+name+'.txt',
         output: output,
     };
 
@@ -55,22 +55,22 @@ describe('Transcript', function() {
     });
 
     it('should produce the expected transcript given gremlindocs-transform.txt', function(done) {
-        this.timeout(5000);
+        this.timeout(10000);
         transcriptTest('gremlindocs-transform', done);
     });
 
     it('should produce the expected transcript given gremlindocs-filter.txt', function(done) {
-        this.timeout(5000);
+        this.timeout(10000);
         transcriptTest('gremlindocs-filter', done);
     });
 
     it('should produce the expected transcript given gremlindocs-side-effects.txt', function(done) {
-        this.timeout(5000);
+        this.timeout(10000);
         transcriptTest('gremlindocs-side-effects', done);
     });
 
     it('should produce the expected transcript given gremlindocs-branch.txt', function(done) {
-        this.timeout(5000);
+        this.timeout(10000);
         transcriptTest('gremlindocs-branch', done);
     });
 
