@@ -3,18 +3,24 @@
 
 // ### http://gremlindocs.com/#transform/_
 // Identity turns an arbitrary object into a "pipeline".
-// NOT WORKING
-// The syntax for javascript will need to be different.
-// Gremlin-node might already support this but how?
-
-// We'd lie to be able to do this
-// var x = [1,2,3]
-// x._()
-// x._().transform('{it -> it+1}')
-
-// While playing around I discovered this:
+// In gremlin-node the _() does not work as in groovy,
+// and in fact doesn't seem to be useful it any way.
+// It cannot start a pipeline from a non-pipeline object,
+// and when chained onto the end of a pipeline seems
+// to just do an identity (no-op) operation:
+g
 g._()
-t._()
+g.V().id()
+g.V().id()._()
+
+// But it is possible with node gremlin to make a pipeline
+// from an array, using the start() pipeline step, as follows:
+var x = [17, 23, 42]
+var a = new ArrayList()
+x.map(function(e) { a.addSync(e); })
+a
+g.start(a.iteratorSync())
+g.start(a.iteratorSync()).transform('{it -> it+1}')
 
 // ### http://gremlindocs.com/#transform/both
 // Get both adjacent vertices of the vertex, the in and the out.
@@ -112,10 +118,10 @@ g.V().map()
 g.V().map('id', 'age')
 
 // ### http://gremlindocs.com/#transform/memoize
-// Remembers a particular mapping from input to output. Long or expensive expressions with no 
-// side effects can use this step to remember a mapping, which helps reduce load when previously 
+// Remembers a particular mapping from input to output. Long or expensive expressions with no
+// side effects can use this step to remember a mapping, which helps reduce load when previously
 // processed objects are passed into it.
-// For situations where memoization may consume large amounts of RAM, consider using an embedded 
+// For situations where memoization may consume large amounts of RAM, consider using an embedded
 // key-value store like JDBM or some other persistent Map implementation.
 g.V().out().out().memoize(1).property('name')
 g.V().out().as('here').out().memoize('here').property('name')
@@ -123,7 +129,7 @@ m = new HashMap()
 g.V().out().out().memoize(1, m).property('name')
 
 // ### http://gremlindocs.com/#transform/order
-// Order the items in the stream according to the closure if provided. If no closure is provided, 
+// Order the items in the stream according to the closure if provided. If no closure is provided,
 // then a default sort order is used.
 g.V().property('name').order()
 g.V().property('name').order('{it -> it.b <=> it.a}')
@@ -159,8 +165,8 @@ g.E('id', '12').inV().id()
 g.E('id', '12').bothV().id()
 
 // ### http://gremlindocs.com/#transform/path
-// Gets the path through the pipeline up to this point, where closures are post-processing for 
-// each object in the path. If the path step is provided closures then, in a round robin fashion, 
+// Gets the path through the pipeline up to this point, where closures are post-processing for
+// each object in the path. If the path step is provided closures then, in a round robin fashion,
 // the closures are evaluated over each object of the path and that post-processed path is returned.
 g.V('id', '1').out().path()
 g.V('id', '1').out().path('{it -> it.id}')
@@ -168,7 +174,7 @@ g.V('id', '1').out().path('{it -> it.id}', '{it -> it.name}')
 g.V('id', '1').outE().inV().property('name').path()
 
 // ### http://gremlindocs.com/#transform/scatter
-// Unroll all objects in the iterable at that step. Gather/Scatter is good for breadth-first 
+// Unroll all objects in the iterable at that step. Gather/Scatter is good for breadth-first
 // traversals where the gather closure filters out unwanted elements at the current radius.
 g.V('id', '1').out()
 g.V('id', '1').out().gather('{it -> it[1..2]}')
@@ -186,7 +192,7 @@ g.V('id', '1').as('x').out('knows').as('y').select('{it -> it.id}', '{it -> it.n
 // ### http://gremlindocs.com/#transform/shuffle
 // Collect all objects up to that step into a list and randomize their order.
 // g.V('id', '1').out().shuffle()
-// shuffle() does the right thing, but because it randomizes we can't use it directly 
+// shuffle() does the right thing, but because it randomizes we can't use it directly
 // and expect repeatable results. So we sort the results afterwards to get repeatability.
 g.V('id', '1').out().shuffle().order('{it -> it.a.name <=> it.b.name}')
 
@@ -198,7 +204,7 @@ g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().transform('{it -> [it.id,
 g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().transform('{it -> [id:it.id, age:it.age]}')
 
 // ### http://gremlindocs.com/#transform/v
-// The vertex iterator for the graph. Utilize this to iterate through all the vertices in the graph. 
+// The vertex iterator for the graph. Utilize this to iterate through all the vertices in the graph.
 // Use with care on large graphs unless used in combination with a key index lookup.
 g.V()
 g.V().id()
