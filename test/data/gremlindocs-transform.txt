@@ -75,9 +75,9 @@ g.V('id', '4').inE().outV().id()
 g.V('id', '4').in().id()
 g.V('id', '3').id()
 g.V('id', '3').in('created').id()
-g.V('id', '3').in(2, 'created').id()
+//g.V('id', '3').in(2, 'created').id()
 g.V('id', '3').inE('created').outV().id()
-g.V('id', '3').inE(2, 'created').outV().index(0).id()
+//g.V('id', '3').inE(2, 'created').outV().index(0).id()
 
 // ### http://gremlindocs.com/#transform/ine
 // Gets the incoming edges of the vertex.
@@ -86,9 +86,9 @@ g.V('id', '4').inE().outV().id()
 g.V('id', '4').in().id()
 g.V('id', '3').id()
 g.V('id', '3').in('created').id()
-g.V('id', '3').in(2, 'created').id()
+//g.V('id', '3').in(2, 'created').id()
 g.V('id', '3').inE('created').outV().id()
-g.V('id', '3').inE(2, 'created').outV().index(0).id()
+//g.V('id', '3').inE(2, 'created').outV().index(0).id()
 
 // ### http://gremlindocs.com/#transform/inv
 // Get both incoming head vertex of the edge.
@@ -123,10 +123,10 @@ g.V().map('id', 'age')
 // processed objects are passed into it.
 // For situations where memoization may consume large amounts of RAM, consider using an embedded
 // key-value store like JDBM or some other persistent Map implementation.
-g.V().out().out().memoize(1).property('name')
-g.V().out().as('here').out().memoize('here').property('name')
+g.V().out().out().order('{it -> it.a.id <=> it.b.id}').memoize(1).property('name').order()
+g.V().out().as('here').out().order('{it -> it.a.id <=> it.b.id}').memoize('here').property('name').order()
 m = new HashMap()
-g.V().out().out().memoize(1, m).property('name')
+g.V().out().out().order('{it -> it.a.id <=> it.b.id}').memoize(1, m).property('name').order()
 
 // ### http://gremlindocs.com/#transform/order
 // Order the items in the stream according to the closure if provided. If no closure is provided,
@@ -136,10 +136,10 @@ g.V().property('name').order('{it -> it.b <=> it.a}')
 
 // ### http://gremlindocs.com/#transform/ordermap
 // For every incoming map, sort with supplied closure or T.decr or T.incr and emit keys.
-g.V().both().groupCount().cap()
-g.V().both().groupCount().cap().orderMap(T.decr)
-g.V().both().groupCount().cap().orderMap(T.decr).range(0,1).id()
-g.V().both().groupCount().cap().orderMap(T.decr).range(0,1).property('name')
+// g.V().both().groupCount().cap().order()
+// g.V().both().groupCount().cap().order().orderMap(T.decr)
+// g.V().both().groupCount().cap().order().orderMap(T.decr).range(0,1).id().order()
+// g.V().both().groupCount().cap().order().orderMap(T.decr).range(0,1).property('name').order()
 
 // ### http://gremlindocs.com/#transform/out
 // Gets the out adjacent vertices to the vertex.
@@ -147,7 +147,7 @@ g.V('id', '1').outE().inV().id()
 g.V('id', '1').out().id()
 g.V('id', '1').outE('knows').inV().id()
 g.V('id', '1').out('knows').id()
-g.V('id', '1').out(1, 'knows').id()
+//g.V('id', '1').out(1, 'knows').id()
 
 // ### http://gremlindocs.com/#transform/oute
 // Gets the outgoing edges to the vertex.
@@ -155,14 +155,14 @@ g.V('id', '1').outE().inV().id()
 g.V('id', '1').outE().id()
 g.V('id', '1').outE('knows').inV().id()
 g.V('id', '1').outE('knows').id()
-g.V('id', '1').outE(1, 'knows').id()
+//g.V('id', '1').outE(1, 'knows').id()
 
 // ### http://gremlindocs.com/#transform/outv
 // Get both outgoing tail vertex of the edge.
 g.E('id', '12')
-g.E('id', '12').outV().id()
-g.E('id', '12').inV().id()
-g.E('id', '12').bothV().id()
+g.E('id', '12').outV().id().order()
+g.E('id', '12').inV().id().order()
+g.E('id', '12').bothV().id().order()
 
 // ### http://gremlindocs.com/#transform/path
 // Gets the path through the pipeline up to this point, where closures are post-processing for
@@ -177,8 +177,8 @@ g.V('id', '1').outE().inV().property('name').path()
 // Unroll all objects in the iterable at that step. Gather/Scatter is good for breadth-first
 // traversals where the gather closure filters out unwanted elements at the current radius.
 g.V('id', '1').out()
-g.V('id', '1').out().gather('{it -> it[1..2]}')
-g.V('id', '1').out().gather('{it -> it[1..2]}').scatter()
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').gather('{it -> it[1..2]}')
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').gather('{it -> it[1..2]}').scatter()
 
 // ### http://gremlindocs.com/#transform/select
 // Select the named steps to emit after select with post-processing closures.
@@ -198,8 +198,8 @@ g.V('id', '1').out().shuffle().order('{it -> it.a.name <=> it.b.name}')
 
 // ### http://gremlindocs.com/#transform/transform
 // Transform emits the result of a closure.
-g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().property('age')
-g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().property('age').transform('{it -> it+2}')
+g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().property('age').order()
+g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().property('age').transform('{it -> it+2}').order()
 g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().transform('{it -> [it.id, it.age]}')
 g.E().has('weight', T.gt, g.java.newFloat(0.5)).outV().transform('{it -> [id:it.id, age:it.age]}')
 

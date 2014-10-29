@@ -6,30 +6,32 @@
 // insertion (greedy). In being "greedy", 'aggregate' will exhaust all the items that come to
 // it from previous steps before emitting the next element.
 x = new ArrayList
-g.V('id', '1').out().aggregate(x).out().except(x)
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').aggregate(x).out().except(x)
 x
 
 // ### http://gremlindocs.com/#side-effect/as
 // Emits input, but names the previous step.
-g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x').property('age')
+g.V().as('x').outE('knows').inV().has('age', T.gt, 30).back('x').property('age').order()
 
 // ### http://gremlindocs.com/#side-effect/groupby
 // Emits input, but groups input after processing it by provided key-closure and value-closure.
 // It is also possible to supply an optional reduce-closure.
-g.V().groupBy('{it -> it}', '{it -> it.out}').cap()
-g.V().groupBy('{it -> it}', '{it -> it.out}', '{it->it.size()}').cap()
+g.V().order('{it -> it.a.id <=> it.b.id}').groupBy('{it -> it}', '{it -> it.out}').cap()
+g.V().order('{it -> it.a.id <=> it.b.id}').groupBy('{it -> it}', '{it -> it.out}', '{it->it.size()}').cap()
 m = new HashMap
-g.V().groupBy(m, '{it -> it}', '{it -> it.out}')
-m
+g.V().order('{it -> it.a.id <=> it.b.id}').groupBy(m, '{it -> it}', '{it -> it.out}')
+// Normally, one can do the following command to see the contents of the HashMap.
+// However, the order the HashMap is printed is not deterministic, so can't be used in a unit test.
+// m
 
 // ### http://gremlindocs.com/#side-effect/groupcount
 // Emits input, but updates a map for each input, where closures provides generic map update.
 m = new HashMap
-g.V().out().groupCount(m)
-m
+g.V().out().order('{it -> it.a.id <=> it.b.id}').groupCount(m)
+// m
 m = new HashMap
-g.V('id', '1').out().groupCount(m, '{it->it}', '{it->it.b+1.0}').out().groupCount(m, '{it->it}', '{it->it.b+0.5}')
-m
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').groupCount(m, '{it->it}', '{it->it.b+1.0}').out().order('{it -> it.a.id <=> it.b.id}').groupCount(m, '{it->it}', '{it->it.b+0.5}')
+// m
 
 // ### http://gremlindocs.com/#side-effect/optional
 // Behaves similar to back except that it does not filter. It will go down a particular path and back
@@ -51,10 +53,10 @@ g.V('id', '1').sideEffect('{it -> x=it}').out('created').in('created').filter('{
 // Emits input, but adds input to collection, where provided closure processes input prior to
 // insertion (lazy). In being "lazy", 'store' will keep element as they are being requested.
 x = new ArrayList
-g.V('id', '1').out().store(x).map()
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').store(x).map()
 x
 x = new ArrayList
-g.V('id', '1').out().store(x).next(function (err, val) { })
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').store(x).next(function (err, val) { })
 // We'd like to immediately check the value of x here, but there is a race condition since
 // the above statement uses an async callback. As a hack, we execute something else first
 // and then check the value of x. This is not absolutely guaranteed to work, but should with very probability.
@@ -66,10 +68,10 @@ x
 // Emits input, but stores row of as values (constrained by column names if provided) in a table.
 // Accepts an optional set of closures that are applied in round-robin fashion to each column of the table.
 t = new g.Table
-g.V().as('x').property('name').as('name').back('x').property('age').as('age').table(t)
+g.V().order('{it -> it.a.id <=> it.b.id}').as('x').property('name').as('name').back('x').property('age').as('age').table(t)
 t
 t = new g.Table
-g.V().has('age').as('x').property('name').as('name').back('x').property('age').as('age').table(t, '{it->it}', '{it->it}', '{it->it>30 ? "over thirty" : "under thirty"}')
+g.V().order('{it -> it.a.id <=> it.b.id}').has('age').as('x').property('name').as('name').back('x').property('age').as('age').table(t, '{it->it}', '{it->it}', '{it->it>30 ? "over thirty" : "under thirty"}')
 t
 
 // ### http://gremlindocs.com/#side-effect/tree

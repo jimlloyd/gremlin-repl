@@ -3,11 +3,11 @@
 
 // ### http://gremlindocs.com/#filter/i
 // A index filter that emits the particular indexed object.
-g.V().index(0).property('name')
+g.V().order('{it -> it.a.id <=> it.b.id}').index(0)
 
 // ### http://gremlindocs.com/#filter/i-j
 // A range filter that emits the objects within a range.
-g.V().range(0,1).property('name')
+g.V().order('{it -> it.a.id <=> it.b.id}').range(0,1)
 
 // ### http://gremlindocs.com/#filter/and
 // Takes a collection of pipes and emits incoming objects that are true for all of the pipes.
@@ -28,7 +28,7 @@ g.V('id', '1').out().in().dedup().id()
 // TODO: Need an easy way to do the equivalent of this:
 // x = [g.v(1), g.v(2), g.v(3)]
 x = new ArrayList()
-g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
+g.V().range(0,2).store(x).id().order()  // the hard way
 g.V().except(x).id()
 x = new ArrayList()
 g.V('id', '1').out().aggregate(x).out().except(x).id()
@@ -87,7 +87,7 @@ g.V('id', '1').outE().or(g._().has('id', T.eq, '9'), g._().has('weight', T.lt, g
 // ### http://gremlindocs.com/#filter/retain
 // Allow everything to pass except what is not in the supplied collection or in the results of a named step.
 x = new ArrayList()
-g.V().order('{it -> it.a.id <=> it.b.id}').range(0,2).store(x).id()  // the hard way
+g.V().range(0,2).store(x).id().order()  // the hard way
 g.V().retain(x).id()
 x = new ArrayList()
 g.V('id','1').out().aggregate(x).out().retain(x).id()

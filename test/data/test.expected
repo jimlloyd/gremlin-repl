@@ -2,132 +2,339 @@ node > // Return all vertices of the demo graph.
 node > // The gremlin groovy console only outputs 'v[id]' for each vertex.
 node > // We currently output all properties (including impl properties) of each vertex.
 node > g.V()
-[ { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
-  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
-  { age: 35, name: 'peter', _id: '6', _type: 'vertex' },
-  { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
-  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex',
+    age: 29,
+    name: 'marko'
+  },
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '3',
+    _type: 'vertex',
+    lang: 'java',
+    name: 'lop'
+  },
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  },
+  {
+    _id: '5',
+    _type: 'vertex',
+    lang: 'java',
+    name: 'ripple'
+  },
+  {
+    _id: '6',
+    _type: 'vertex',
+    age: 35,
+    name: 'peter'
+  }
+]
 node > 
 node > // Return just the names of each vertex
 node > g.V().property('name')
-[ 'lop', 'vadas', 'marko', 'peter', 'ripple', 'josh' ]
+[
+  'josh',
+  'lop',
+  'marko',
+  'peter',
+  'ripple',
+  'vadas'
+]
 node > 
 node > // Return all application properties of each vertex (omit impl properties)
 node > g.V().map()
-[ { name: 'lop', lang: 'java' },
-  { age: 27, name: 'vadas' },
-  { age: 29, name: 'marko' },
-  { age: 35, name: 'peter' },
-  { name: 'ripple', lang: 'java' },
-  { age: 32, name: 'josh' } ]
+[
+  {
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    age: 29,
+    name: 'marko'
+  },
+  {
+    age: 32,
+    name: 'josh'
+  },
+  {
+    age: 35,
+    name: 'peter'
+  },
+  {
+    lang: 'java',
+    name: 'lop'
+  },
+  {
+    lang: 'java',
+    name: 'ripple'
+  }
+]
 node > 
 node > // Return all edges, incuding all properties of each edge.
 node > g.E()
-[ { weight: 1,
+[
+  {
     _id: '10',
-    _type: 'edge',
-    _outV: '4',
     _inV: '5',
-    _label: 'created' },
-  { weight: 0.5,
-    _id: '7',
-    _type: 'edge',
-    _outV: '1',
-    _inV: '2',
-    _label: 'knows' },
-  { weight: 0.4,
-    _id: '9',
-    _type: 'edge',
-    _outV: '1',
-    _inV: '3',
-    _label: 'created' },
-  { weight: 1,
-    _id: '8',
-    _type: 'edge',
-    _outV: '1',
-    _inV: '4',
-    _label: 'knows' },
-  { weight: 0.4,
-    _id: '11',
-    _type: 'edge',
+    _label: 'created',
     _outV: '4',
-    _inV: '3',
-    _label: 'created' },
-  { weight: 0.2,
-    _id: '12',
     _type: 'edge',
-    _outV: '6',
+    weight: 1
+  },
+  {
+    _id: '11',
     _inV: '3',
-    _label: 'created' } ]
+    _label: 'created',
+    _outV: '4',
+    _type: 'edge',
+    weight: 0.4
+  },
+  {
+    _id: '12',
+    _inV: '3',
+    _label: 'created',
+    _outV: '6',
+    _type: 'edge',
+    weight: 0.2
+  },
+  {
+    _id: '7',
+    _inV: '2',
+    _label: 'knows',
+    _outV: '1',
+    _type: 'edge',
+    weight: 0.5
+  },
+  {
+    _id: '8',
+    _inV: '4',
+    _label: 'knows',
+    _outV: '1',
+    _type: 'edge',
+    weight: 1
+  },
+  {
+    _id: '9',
+    _inV: '3',
+    _label: 'created',
+    _outV: '1',
+    _type: 'edge',
+    weight: 0.4
+  }
+]
 node > 
 node > // Return only the application properties of each edge.
 node > g.E().map()
-[ { weight: 1 },
-  { weight: 0.5 },
-  { weight: 0.4 },
-  { weight: 1 },
-  { weight: 0.4 },
-  { weight: 0.2 } ]
+[
+  {
+    weight: 0.2
+  },
+  {
+    weight: 0.4
+  },
+  {
+    weight: 0.4
+  },
+  {
+    weight: 0.5
+  },
+  {
+    weight: 1
+  },
+  {
+    weight: 1
+  }
+]
 node > 
 node > // Return just the weight of each edge.
 node > g.E().property('weight')
-[ 1, 0.5, 0.4, 1, 0.4, 0.2 ]
+[
+  0.2,
+  0.4,
+  0.4,
+  0.5,
+  1,
+  1
+]
 node > 
 node > // With the groovy console we can do:
 node > // gremlin> v = g.v(1)
 node > // But with the node gremlin console we must do:
 node > v = g.V('id', '1')
-[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex',
+    age: 29,
+    name: 'marko'
+  }
+]
 node > 
 node > // But note that currently with the node console, v is a pipeline an executed immediately.
 node > // So, the value of v has immediately changed:
 node > v
-[]
+[
+]
 node > 
 node > // This behavior can be deferred by using 'var'.
 node > var v = g.V('id', '1')
 node > v
-[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex',
+    age: 29,
+    name: 'marko'
+  }
+]
 node > v
-[]
+[
+]
 node > 
 node > // All adjacent vertices connected by any out edge
 node > g.V('id', '1').out()
-[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
-  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+[
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '3',
+    _type: 'vertex',
+    lang: 'java',
+    name: 'lop'
+  },
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  }
+]
 node > 
 node > // All adjacent vertices connected by out edges labeled 'knows'
 node > g.V('id', '1').out('knows')
-[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+[
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  }
+]
 node > 
 node > // All outbound edges
 node > g.V('id', '1').out()
-[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { age: 32, name: 'josh', _id: '4', _type: 'vertex' },
-  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+[
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '3',
+    _type: 'vertex',
+    lang: 'java',
+    name: 'lop'
+  },
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  }
+]
 node > 
 node > // Outbound edges labeled 'knows'
 node > g.V('id', '1').out('knows')
-[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+[
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  }
+]
 node > 
 node > // Use filter closure to traverse to head verticies of edges that have a weight less than 1.0
 node > g.V('id', '1').outE().filter('{it -> it.weight < 1.0}').inV()
-[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+[
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '3',
+    _type: 'vertex',
+    lang: 'java',
+    name: 'lop'
+  }
+]
 node > 
 node > // lets traverse to marko's 30+ year old friends' created projects
 node > g.V('name', 'marko').out('knows').filter('{it -> it.age > 30}').out('created').property('name')
-[ 'ripple', 'lop' ]
+[
+  'lop',
+  'ripple'
+]
 node > 
 node > // Create a java HashSet to use in following gremlin statement
 node > var s = new HashSet()
 node > // Compute the shortest path between nodes with id '2' and '6'.
 node > g.V('id', '2').both().except(s).store(s).loop(3, '{it -> it.object.id != "6" && it.loops < 10}').has('id','6').path()
-[ [ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-    { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
-    { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' },
-    { age: 35, name: 'peter', _id: '6', _type: 'vertex' } ] ]
+[
+  [
+    {
+      _id: '1',
+      _type: 'vertex',
+      age: 29,
+      name: 'marko'
+    },
+    {
+      _id: '2',
+      _type: 'vertex',
+      age: 27,
+      name: 'vadas'
+    },
+    {
+      _id: '3',
+      _type: 'vertex',
+      lang: 'java',
+      name: 'lop'
+    },
+    {
+      _id: '6',
+      _type: 'vertex',
+      age: 35,
+      name: 'peter'
+    }
+  ]
+]

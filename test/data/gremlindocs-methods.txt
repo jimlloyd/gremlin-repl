@@ -35,8 +35,6 @@ v2
 edge
 
 // http://gremlindocs.com/#methods/graph-addvertex
-// Note, here we are relying on the experimental promises version!
-// This won't work if we push to Travis or publish it any other way.
 t = makeEmptyTinker()
 t.addVertex()
 t.addVertex()
@@ -114,12 +112,12 @@ pipe.out().id()
 // but as far as fill() is concerned, it is being called with a regular node callback function.
 var m = new ArrayList()
 var d = Q.defer()
-g.V('id', '1').out().fill(m, d.makeNodeResolver())
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').fill(m, d.makeNodeResolver())
 d.promise
 m
 // Here we truly use the promise API
 var n = new ArrayList()
-g.V('id', '1').out().fill(n)
+g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').fill(n)
 n
 
 // http://gremlindocs.com/#methods/pipe-iterate
@@ -161,7 +159,7 @@ n
 
 g = makeDemoTinker()
 var d = Q.defer()
-g.V().sideEffect('{it -> it.name="same-again"}').next(d.makeNodeResolver())
+g.V().order('{it -> it.a.id <=> it.b.id}').sideEffect('{it -> it.name="same-again"}').next(d.makeNodeResolver())
 d.promise
 g.V().property('name')
 

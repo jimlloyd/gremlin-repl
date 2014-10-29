@@ -10,5 +10,8 @@ node > var timers = require('timers')
 node > var ignore1 = timers.setTimeout(function() { d1.resolve(23); }, 60)
 node > var ignore2 = timers.setTimeout(function() { d2.resolve(42); }, 50)
 node > Q.all([d1.promise, d2.promise])
-[ 23, 42 ]
+[
+  23,
+  42
+]
 node > 

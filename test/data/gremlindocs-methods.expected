@@ -7,15 +7,33 @@ node > // TODO: Not implemented.
 node > 
 node > // http://gremlindocs.com/#methods/element-remove
 node > g.E().property('weight');
-[ 1, 0.5, 0.4, 1, 0.4, 0.2 ]
+[
+  0.2,
+  0.4,
+  0.4,
+  0.5,
+  1,
+  1
+]
 node > var deferred = Q.defer();
 node > g.E().has('weight',T.lt,g.java.newFloat(0.5)).remove(deferred.makeNodeResolver()) // No removeSync
 node > deferred.promise
 node > g.E().property('weight')     // now show that the edges with weights<0.5 were removed.
-[ 1, 0.5, 1 ]
+[
+  0.5,
+  1,
+  1
+]
 node > var g = makeDemoTinker()         // restore the demo graph
 node > g.E().property('weight')     // now show that all edges restored.
-[ 1, 0.5, 0.4, 1, 0.4, 0.2 ]
+[
+  0.2,
+  0.4,
+  0.4,
+  0.5,
+  1,
+  1
+]
 node > 
 node > // ### http://gremlindocs.com/#methods/element-values
 node > // Gets the property values of an element.
@@ -34,96 +52,164 @@ node > var d3 = Q.defer()
 node > t.addEdge(null, v1, v2, 'friend', d3.makeNodeResolver())
 node > var edge = d3.promise
 node > v1
-[ { _id: '0', _type: 'vertex' } ]
+[
+  {
+    _id: '0',
+    _type: 'vertex'
+  }
+]
 node > v2
-[ { _id: '1', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex'
+  }
+]
 node > edge
-[ { _id: '2',
-    _type: 'edge',
-    _outV: '0',
+[
+  {
+    _id: '2',
     _inV: '1',
-    _label: 'friend' } ]
+    _label: 'friend',
+    _outV: '0',
+    _type: 'edge'
+  }
+]
 node > 
 node > // http://gremlindocs.com/#methods/graph-addvertex
-node > // Note, here we are relying on the experimental promises version!
-node > // This won't work if we push to Travis or publish it any other way.
 node > t = makeEmptyTinker()
-[ 'tinkergraph[vertices:0 edges:0]' ]
+[
+  'tinkergraph[vertices:0 edges:0]'
+]
 node > t.addVertex()
-[ { _id: '0', _type: 'vertex' } ]
+[
+  {
+    _id: '0',
+    _type: 'vertex'
+  }
+]
 node > t.addVertex()
-[ { _id: '1', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex'
+  }
+]
 node > t.addVertex(100)
-[ { _id: '100', _type: 'vertex' } ]
+[
+  {
+    _id: '100',
+    _type: 'vertex'
+  }
+]
 node > // But our addVertex currently ignores passed in properties
 node > t.addVertex(null, {name: 'stephen'})
-[ { _id: '2', _type: 'vertex' } ]
+[
+  {
+    _id: '2',
+    _type: 'vertex'
+  }
+]
 node > 
 node > // http://gremlindocs.com/#methods/graph-e
 node > g = makeDemoTinker()
-[ 'tinkergraph[vertices:6 edges:6]' ]
+[
+  'tinkergraph[vertices:6 edges:6]'
+]
 node > g.e('10')
-[ { weight: 1,
+[
+  {
     _id: '10',
-    _type: 'edge',
-    _outV: '4',
     _inV: '5',
-    _label: 'created' } ]
+    _label: 'created',
+    _outV: '4',
+    _type: 'edge',
+    weight: 1
+  }
+]
 node > g.e('10', '11', '12')
-[ { weight: 1,
+[
+  {
     _id: '10',
-    _type: 'edge',
-    _outV: '4',
     _inV: '5',
-    _label: 'created' },
-  { weight: 0.4,
-    _id: '11',
-    _type: 'edge',
+    _label: 'created',
     _outV: '4',
-    _inV: '3',
-    _label: 'created' },
-  { weight: 0.2,
-    _id: '12',
     _type: 'edge',
-    _outV: '6',
+    weight: 1
+  },
+  {
+    _id: '11',
     _inV: '3',
-    _label: 'created' } ]
+    _label: 'created',
+    _outV: '4',
+    _type: 'edge',
+    weight: 0.4
+  },
+  {
+    _id: '12',
+    _inV: '3',
+    _label: 'created',
+    _outV: '6',
+    _type: 'edge',
+    weight: 0.2
+  }
+]
 node > g.e(['10', '11', '12'])
-[ { weight: 1,
+[
+  {
     _id: '10',
-    _type: 'edge',
-    _outV: '4',
     _inV: '5',
-    _label: 'created' },
-  { weight: 0.4,
-    _id: '11',
-    _type: 'edge',
+    _label: 'created',
     _outV: '4',
-    _inV: '3',
-    _label: 'created' },
-  { weight: 0.2,
-    _id: '12',
     _type: 'edge',
-    _outV: '6',
+    weight: 1
+  },
+  {
+    _id: '11',
     _inV: '3',
-    _label: 'created' } ]
+    _label: 'created',
+    _outV: '4',
+    _type: 'edge',
+    weight: 0.4
+  },
+  {
+    _id: '12',
+    _inV: '3',
+    _label: 'created',
+    _outV: '6',
+    _type: 'edge',
+    weight: 0.2
+  }
+]
 node > var pipe = g.e(['10', '11', '12'])
 node > pipe.id()
-[ '10', '11', '12' ]
+[
+  '10',
+  '11',
+  '12'
+]
 node > 
 node > // http://gremlindocs.com/#methods/graph-load
 node > // Load a file from one of several standard formats such as GraphML, GML, or GraphSON.
 node > // Note: gremlin-node currently limited to GraphML.
 node > toy = makeEmptyTinker()
-[ 'tinkergraph[vertices:0 edges:0]' ]
+[
+  'tinkergraph[vertices:0 edges:0]'
+]
 node > toy.loadGraphMLSync('toy-example.xml')
 node > toy
-[ 'tinkergraph[vertices:6 edges:6]' ]
+[
+  'tinkergraph[vertices:6 edges:6]'
+]
 node > dead = makeEmptyTinker()
-[ 'tinkergraph[vertices:0 edges:0]' ]
+[
+  'tinkergraph[vertices:0 edges:0]'
+]
 node > dead.loadGraphMLSync('grateful-dead.xml')
 node > dead
-[ 'tinkergraph[vertices:809 edges:8049]' ]
+[
+  'tinkergraph[vertices:809 edges:8049]'
+]
 node > 
 node > // http://gremlindocs.com/#methods/graph-save
 node > // Save a graph to file given one of several standard formats such as GraphML, GML, or GraphSON.
@@ -133,16 +219,24 @@ node > dead.saveGraphSONSync('/tmp/copy-dead.json')
 node > 
 node > // Now read back these files
 node > xmldead = makeEmptyTinker()
-[ 'tinkergraph[vertices:0 edges:0]' ]
+[
+  'tinkergraph[vertices:0 edges:0]'
+]
 node > xmldead.loadGraphMLSync('/tmp/copy-dead.xml')
 node > xmldead
-[ 'tinkergraph[vertices:809 edges:8049]' ]
+[
+  'tinkergraph[vertices:809 edges:8049]'
+]
 node > 
 node > jsondead = makeEmptyTinker()
-[ 'tinkergraph[vertices:0 edges:0]' ]
+[
+  'tinkergraph[vertices:0 edges:0]'
+]
 node > jsondead.loadGraphSONSync('/tmp/copy-dead.json')
 node > jsondead
-[ 'tinkergraph[vertices:809 edges:8049]' ]
+[
+  'tinkergraph[vertices:809 edges:8049]'
+]
 node > 
 node > // http://gremlindocs.com/#methods/graph-v
 node > // Get a vertex or set of vertices by providing one or more vertex identifiers. The identifiers
@@ -158,20 +252,67 @@ node > // exhausting the pipeline without running other steps.
 node > // However, if a variable is assigned the promise, then the variable can be used to start a pipeline.
 node > // See example at end using 'var pipe = ...'.
 node > g = makeDemoTinker()
-[ 'tinkergraph[vertices:6 edges:6]' ]
+[
+  'tinkergraph[vertices:6 edges:6]'
+]
 node > g.v('2')
-[ { age: 27, name: 'vadas', _id: '2', _type: 'vertex' } ]
+[
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  }
+]
 node > g.v('1', '2','4')
-[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
-  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex',
+    age: 29,
+    name: 'marko'
+  },
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  }
+]
 node > g.v(['1', '2','4'])
-[ { age: 29, name: 'marko', _id: '1', _type: 'vertex' },
-  { age: 27, name: 'vadas', _id: '2', _type: 'vertex' },
-  { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex',
+    age: 29,
+    name: 'marko'
+  },
+  {
+    _id: '2',
+    _type: 'vertex',
+    age: 27,
+    name: 'vadas'
+  },
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  }
+]
 node > var pipe = g.v('1')
 node > pipe.out().id()
-[ '2', '4', '3' ]
+[
+  '2',
+  '3',
+  '4'
+]
 node > 
 node > // http://gremlindocs.com/#methods/index-map-entry
 node > // Look up a value in an index.
@@ -190,17 +331,17 @@ node > // We use a promise here to make a callback with d.makeNodeResolver(),
 node > // but as far as fill() is concerned, it is being called with a regular node callback function.
 node > var m = new ArrayList()
 node > var d = Q.defer()
-node > g.V('id', '1').out().fill(m, d.makeNodeResolver())
+node > g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').fill(m, d.makeNodeResolver())
 node > d.promise
-'[v[2], v[4], v[3]]'
+'[v[2], v[3], v[4]]'
 node > m
-'[v[2], v[4], v[3]]'
+'[v[2], v[3], v[4]]'
 node > // Here we truly use the promise API
 node > var n = new ArrayList()
-node > g.V('id', '1').out().fill(n)
-'[v[2], v[4], v[3]]'
+node > g.V('id', '1').out().order('{it -> it.a.id <=> it.b.id}').fill(n)
+'[v[2], v[3], v[4]]'
 node > n
-'[v[2], v[4], v[3]]'
+'[v[2], v[3], v[4]]'
 node > 
 node > // http://gremlindocs.com/#methods/pipe-iterate
 node > // Calls Pipe.next for all objects in the pipe. This is an important notion
@@ -240,13 +381,29 @@ node > // Groovy Gremlin console for when there is more than one statement prese
 node > // on a single line. Should we try to mimic that behavior? Seems unnecessary.
 node > 
 node > g = makeDemoTinker()
-[ 'tinkergraph[vertices:6 edges:6]' ]
+[
+  'tinkergraph[vertices:6 edges:6]'
+]
 node > var d = Q.defer()
-node > g.V().sideEffect('{it -> it.name="same-again"}').next(d.makeNodeResolver())
+node > g.V().order('{it -> it.a.id <=> it.b.id}').sideEffect('{it -> it.name="same-again"}').next(d.makeNodeResolver())
 node > d.promise
-[ { name: 'same-again', lang: 'java', _id: '3', _type: 'vertex' } ]
+[
+  {
+    _id: '1',
+    _type: 'vertex',
+    age: 29,
+    name: 'same-again'
+  }
+]
 node > g.V().property('name')
-[ 'same-again', 'vadas', 'marko', 'peter', 'ripple', 'josh' ]
+[
+  'josh',
+  'lop',
+  'peter',
+  'ripple',
+  'same-again',
+  'vadas'
+]
 node > 
 node > 'goodbye'
 'goodbye'
