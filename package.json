@@ -16,7 +16,7 @@
   "dependencies": {
     "debug": "2.0.0",
     "gremlin": "^0.4.0",
-    "json-stable-stringify": "git://github.com/jimlloyd/json-stable-stringify.git#feature/pretty-and-or-sorted-output.2",
+    "json-stable-stringify": "git://github.com/jimlloyd/json-stable-stringify.git",
     "lodash": "^2.4.1",
     "object-inspect": "^1.0.0",
     "repl-promise": "^0.0.5"
