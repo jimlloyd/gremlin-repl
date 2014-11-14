@@ -4,26 +4,50 @@ node >
 node > // ### http://gremlindocs.com/#branch/copysplit
 node > // Copies incoming object to internal pipes.
 node > g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).fairMerge()
-[ 'ripple', 27, 'lop', 32 ]
+[
+  'lop',
+  'ripple',
+  27,
+  32
+]
 node > g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).exhaustMerge()
-[ 'ripple', 'lop', 27, 32 ]
+[
+  'lop',
+  'ripple',
+  27,
+  32
+]
 node > 
 node > // ### http://gremlindocs.com/#branch/exhaustmerge
 node > // Used in combination with a copySplit, merging the parallel traversals by exhaustively getting the objects 
 node > // of the first, then the second, etc. (contrast to fairMerge).
 node > g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).exhaustMerge()
-[ 'ripple', 'lop', 27, 32 ]
+[
+  'lop',
+  'ripple',
+  27,
+  32
+]
 node > 
 node > // ### http://gremlindocs.com/#branch/fairmerge
 node > // Used in combination with a copySplit, merging the parallel traversals in a round-robin fashion.
 node > // (contrast to exhaustMerge)
 node > g.V('id','1').out('knows').copySplit(g._().out('created').property('name'), g._().property('age')).fairMerge()
-[ 'ripple', 27, 'lop', 32 ]
+[
+  'lop',
+  'ripple',
+  27,
+  32
+]
 node > 
 node > // ### http://gremlindocs.com/#branch/ifthenelse
 node > // Allows for if-then-else conditional logic.
 node > g.V('id','1').out().ifThenElse("{it->it.name=='josh'}","{it->it.age}","{it->it.name}")
-[ 'vadas', 32, 'lop' ]
+[
+  'lop',
+  'vadas',
+  32
+]
 node > 
 node > // ### http://gremlindocs.com/#branch/loop
 node > // Loop over a particular set of steps in the pipeline. The first argument is either the number of steps back 
@@ -37,7 +61,26 @@ node > // The final argument is known as the "emit" closure. This boolean-based 
 node > // current object in the loop structure is emitted or not. As such, it is possible to emit intermediate objects, 
 node > // not simply those at the end of the loop.
 node > g.V('id','1').out().out()
-[ { name: 'ripple', lang: 'java', _id: '5', _type: 'vertex' },
-  { name: 'lop', lang: 'java', _id: '3', _type: 'vertex' } ]
+[
+  {
+    _id: '3',
+    _type: 'vertex',
+    lang: 'java',
+    name: 'lop'
+  },
+  {
+    _id: '5',
+    _type: 'vertex',
+    lang: 'java',
+    name: 'ripple'
+  }
+]
 node > g.V('id','1').out().loop(1, '{it -> it.loops < 3}', '{it -> it.object.name=="josh"}' )
-[ { age: 32, name: 'josh', _id: '4', _type: 'vertex' } ]
+[
+  {
+    _id: '4',
+    _type: 'vertex',
+    age: 32,
+    name: 'josh'
+  }
+]
